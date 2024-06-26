@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteDog } from '../features/dogs/dogsSlice';
-import './DogList.css'; // Make sure the CSS file is correctly imported
+import './DogList.css';
 
 const DogList = () => {
   const dogs = useSelector(state => state.dogs);
@@ -15,7 +15,7 @@ const DogList = () => {
   return (
     <div className="dog-list">
       <h1>Bark Buddy</h1>
-      <Link to="/add-dog">Add a Dog</Link>
+      <Link to="/add-dog" className="add-dog-link">Add a Dog</Link>
       <ul>
         {dogs && dogs.length > 0 ? (
           dogs.map(dog => (
@@ -25,7 +25,7 @@ const DogList = () => {
             </li>
           ))
         ) : (
-          <p>No dogs found</p>
+          <p>No dogs found</p>  // If this is the source of your error, ensure this comment is removed or correctly placed
         )}
       </ul>
     </div>

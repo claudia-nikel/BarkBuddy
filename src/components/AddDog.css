@@ -1,0 +1,17 @@
+.add-dog-button {
+    background-color: #ff4500; /* Vibrant color for visibility */
+    color: white; /* High contrast text color */
+    padding: 10px 20px; /* Generous padding to increase size */
+    font-size: 16px; /* Larger font size for readability */
+    font-weight: bold; /* Bold text for emphasis */
+    border: none; /* No border for a modern look */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    cursor: pointer; /* Cursor indicates clickability */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions for interactions */
+}
+
+.add-dog-button:hover {
+    background-color: #e63900; /* Darker shade on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover for 3D effect */
+}

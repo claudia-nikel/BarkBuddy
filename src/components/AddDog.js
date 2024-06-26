@@ -3,19 +3,20 @@ import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 import { v4 as uuidv4 } from 'uuid';
+import './AddDog.css';
 
 const AddDog = () => {
   const [name, setName] = useState('');
   const [info, setInfo] = useState('');
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Use navigate instead of history
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const id = uuidv4();
     dispatch(addDog({ id, name, info, image }));
-    navigate('/'); // Use navigate to redirect
+    navigate('/'); // Navigate back to the list
   };
 
   const handleImageChange = (e) => {
@@ -39,7 +40,7 @@ const AddDog = () => {
           onChange={(e) => setInfo(e.target.value)}
         />
         <input type="file" onChange={handleImageChange} />
-        <button type="submit">Add Dog</button>
+        <button type="submit" className="add-dog-button">Add Dog</button> {/* Apply the CSS class */}
       </form>
     </div>
   );
