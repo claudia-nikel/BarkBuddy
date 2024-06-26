@@ -22,8 +22,13 @@ const DogList = () => {
         {dogs && dogs.length > 0 ? (
           dogs.map(dog => (
             <li key={dog.id} className="dog-item">
-              <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
-              <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
+              <div className="dog-info">
+                <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
+              </div>
+              <div className="dog-actions">
+                <span className="dog-breed">{dog.breed}</span> {/* Breed field */}
+                <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
+              </div>
             </li>
           ))
         ) : (

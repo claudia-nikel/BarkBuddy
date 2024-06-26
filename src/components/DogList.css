@@ -52,7 +52,10 @@
     color: #e63900;
     text-shadow: 2px 2px 8px rgba(0,0,0,0);
 }
-
+.dog-breed {
+    margin-right: 10px; /* Add some space between breed and delete button */
+  }
+  
 .delete-button {
     margin-left: auto; /* This will push the button to the far right */
     padding: 5px 10px; /* Adjust padding as needed */
