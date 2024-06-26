@@ -14,7 +14,7 @@ const DogList = () => {
 
   return (
     <div className="dog-list">
-      <h1>Bark Buddy</h1>
+      <h1 className="h1-title">Bark Buddy</h1>
       <Link to="/add-dog" className="add-dog-link">Add a Dog</Link>
       <ul>
         {dogs && dogs.length > 0 ? (
@@ -25,7 +25,7 @@ const DogList = () => {
             </li>
           ))
         ) : (
-          <p>No dogs found</p>  // If this is the source of your error, ensure this comment is removed or correctly placed
+          <p>No dogs found</p>
         )}
       </ul>
     </div>
