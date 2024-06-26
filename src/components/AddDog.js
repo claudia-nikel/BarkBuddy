@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 import { v4 as uuidv4 } from 'uuid';
 
 const AddDog = () => {
@@ -9,13 +9,13 @@ const AddDog = () => {
   const [info, setInfo] = useState('');
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate(); // Use navigate instead of history
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const id = uuidv4();
     dispatch(addDog({ id, name, info, image }));
-    history.push('/');
+    navigate('/'); // Use navigate to redirect
   };
 
   const handleImageChange = (e) => {
@@ -46,3 +46,4 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
