@@ -8,12 +8,12 @@ import UserDogPage from './components/UserDogPage';
 const App = () => {
   return (
     <Router>
-      <Switch>
+      <Routes>
         <Route path="/" exact component={DogList} />
         <Route path="/add-dog" component={AddDog} />
         <Route path="/dog/:id" component={DogDetail} />
         <Route path="/user-dog/:id" component={UserDogPage} />
-      </Switch>
+      </Routes>
     </Router>
   );
 };
