@@ -10,7 +10,7 @@ export const dogsSlice = createSlice({
     updateDog: (state, action) => {
       const index = state.findIndex(dog => dog.id === action.payload.id);
       if (index !== -1) {
-        state[index] = {...state[index], ...action.payload};
+        state[index] = { ...state[index], ...action.payload };
       }
     },
     deleteDog: (state, action) => {
