@@ -15,7 +15,7 @@ const DogList = () => {
   return (
     <div className="dog-list">
       <h1 className="h1-title">Bark Buddy</h1>
-      <Link to="/add-dog" className="add-dog-link">Add a Dog</Link>
+      <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
       <ul>
         {dogs && dogs.length > 0 ? (
           dogs.map(dog => (

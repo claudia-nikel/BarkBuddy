@@ -26,4 +26,23 @@
     background-color: #e63900;
   }
 
+  .form-group {
+    margin-bottom: 15px; /* Adds space between each form group */
+  }
+  
+  .form-group label {
+    margin-bottom: 5px; /* Space between the label and the input field */
+  }
+  
+  .input,
+  select {
+    width: 100%; /* Makes the input take full width of its parent */
+    padding: 8px;
+    margin-bottom: 10px; /* Adds space below each input */
+  }
+  
+  .submit-button-container {
+    text-align: right; /* Aligns the submit button to the right */
+    margin-bottom: 20px; /* Space below the submit button */
+  }
   
