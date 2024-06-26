@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import './AddDog.css';
 
@@ -20,7 +20,7 @@ const AddDog = () => {
     e.preventDefault();
     const id = uuidv4();
     dispatch(addDog({ id, name, age, gender, color, nickname, owner, image }));
-    navigate('/');
+    navigate('/'); // Navigate back to the main page after form submission
   };
 
   const handleImageChange = (e) => {
@@ -28,8 +28,11 @@ const AddDog = () => {
   };
 
   return (
-    <div>
-      <h1>Add a Dog</h1>
+    <div className="add-dog-container">
+      <div className="submit-button-container">
+        <button type="submit" className="submit-button" onClick={handleSubmit}>Submit</button>
+      </div>
+      <h1>Dog Info</h1>
       <form onSubmit={handleSubmit}>
         <input type="text" placeholder="Dog's Name" value={name} onChange={(e) => setName(e.target.value)} />
         <input type="number" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} />
@@ -42,7 +45,7 @@ const AddDog = () => {
         <input type="text" placeholder="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} />
         <input type="text" placeholder="Owner's Name" value={owner} onChange={(e) => setOwner(e.target.value)} />
         <input type="file" onChange={handleImageChange} />
-        <button type="submit">Add Dog</button>
+        {/* The original submit button inside the form is redundant now, consider removing or hiding it */}
       </form>
     </div>
   );
