@@ -4,13 +4,12 @@ import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import DogDetail from './components/DogDetail';
 import UserDogPage from './components/UserDogPage';
-import DogCount from './components/DogCount';
+import './App.css'; // Assuming you have a global CSS file
 
 const App = () => {
   return (
     <Router>
-      <div>
-        <DogCount />  {/* This positions DogCount at a fixed place above all routes */}
+      <div className="app-container">
         <Routes>
           <Route path="/" element={<DogList />} />
           <Route path="/add-dog" element={<AddDog />} />
@@ -23,5 +22,6 @@ const App = () => {
 };
 
 export default App;
+
 
 
