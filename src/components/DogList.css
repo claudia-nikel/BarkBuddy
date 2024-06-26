@@ -1,0 +1,26 @@
+.dog-list {
+    background-image: url('../../public/images/paw-pattern.png'); /* Assuming the root is the public directory */
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    padding: 20px;
+}
+
+.dog-item {
+    border: 2px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.dog-item:hover {
+    border-color: #ffcc00;
+}
+
+.delete-button {
+    background-image: url('../../public/images/bone-icon.png');
+    background-size: cover;
+    width: 40px;
+    height: 40px;
+}
