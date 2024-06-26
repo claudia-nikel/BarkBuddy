@@ -9,13 +9,14 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" exact component={DogList} />
-        <Route path="/add-dog" component={AddDog} />
-        <Route path="/dog/:id" component={DogDetail} />
-        <Route path="/user-dog/:id" component={UserDogPage} />
+        <Route path="/" element={<DogList />} />
+        <Route path="/add-dog" element={<AddDog />} />
+        <Route path="/dog/:id" element={<DogDetail />} />
+        <Route path="/user-dog/:id" element={<UserDogPage />} />
       </Routes>
     </Router>
   );
 };
 
 export default App;
+
