@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteDog } from '../features/dogs/dogsSlice';
+import DogCount from './DogCount'; // Import DogCount component
 import './DogList.css';
 
 const DogList = () => {
@@ -15,6 +16,7 @@ const DogList = () => {
   return (
     <div className="dog-list">
       <h1 className="h1-title">Bark Buddy</h1>
+      <DogCount /> {/* Place DogCount component below the title */}
       <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
       <ul>
         {dogs && dogs.length > 0 ? (
