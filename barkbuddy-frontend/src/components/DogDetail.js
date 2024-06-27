@@ -59,7 +59,7 @@ const DogDetail = () => {
         const csv = decoder.decode(result.value);
         const results = Papa.parse(csv, { header: true });
         const breedDetail = results.data.find(b => b.Name === breed);
-        console.log('Breed Details:', breedDetail); // Debug log
+        console.log('Fetched Breed Details:', breedDetail); // Debug log
         setBreedDetails(breedDetail);
       } catch (error) {
         console.error('Failed to fetch breed details', error);
@@ -170,4 +170,5 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
 

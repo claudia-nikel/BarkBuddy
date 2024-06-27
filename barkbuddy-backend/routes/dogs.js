@@ -1,73 +1,59 @@
 const express = require('express');
+const { Dog } = require('../models');
 const router = express.Router();
-const Dog = require('../models/Dog');
+const multer = require('multer');
 
-// Get all dogs
+// Configure multer for image uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 router.get('/', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
     res.json(dogs);
   } catch (error) {
-    console.error('Failed to fetch dogs', error);
     res.status(500).json({ error: 'Failed to fetch dogs' });
   }
 });
 
-// Get a specific dog
-router.get('/:id', async (req, res) => {
-  try {
-    const dog = await Dog.findByPk(req.params.id);
-    if (dog) {
-      res.json(dog);
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
-    }
-  } catch (error) {
-    console.error('Failed to fetch dog', error);
-    res.status(500).json({ error: 'Failed to fetch dog' });
-  }
-});
+router.post('/', upload.single('image'), async (req, res) => {
+  const { name, age, gender, color, nickname, owner, breed } = req.body;
+  const image = req.file ? req.file.buffer : null;
 
-// Create a new dog
-router.post('/', async (req, res) => {
   try {
-    const dog = await Dog.create(req.body);
-    res.status(201).json(dog);
+    const newDog = await Dog.create({ id, name, age, gender, color, nickname, owner, breed, image });
+    res.json(newDog);
   } catch (error) {
-    console.error('Failed to create dog', error);
     res.status(500).json({ error: 'Failed to create dog' });
   }
 });
 
-// Update a dog
-router.put('/:id', async (req, res) => {
-  try {
-    const dog = await Dog.findByPk(req.params.id);
-    if (dog) {
-      await dog.update(req.body);
-      res.json(dog);
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
-    }
-  } catch (error) {
-    console.error('Failed to update dog', error);
-    res.status(500).json({ error: 'Failed to update dog' });
-  }
-});
+router.put('/:id', upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+  const { name, age, gender, color, nickname, owner, breed } = req.body;
+  const image = req.file ? req.file.buffer : null;
 
-// Delete a dog
-router.delete('/:id', async (req, res) => {
   try {
-    const dog = await Dog.findByPk(req.params.id);
-    if (dog) {
-      await dog.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
+    const dog = await Dog.findByPk(id);
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
     }
+
+    dog.name = name;
+    dog.age = age;
+    dog.gender = gender;
+    dog.color = color;
+    dog.nickname = nickname;
+    dog.owner = owner;
+    dog.breed = breed;
+    if (image) {
+      dog.image = image;
+    }
+
+    await dog.save();
+    res.json(dog);
   } catch (error) {
-    console.error('Failed to delete dog', error);
-    res.status(500).json({ error: 'Failed to delete dog' });
+    res.status(500).json({ error: 'Failed to update dog' });
   }
 });
 
