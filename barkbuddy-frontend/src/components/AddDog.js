@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import Papa from 'papaparse';
 import './AddDog.css';
@@ -13,20 +14,17 @@ const AddDog = () => {
   const [color, setColor] = useState('');
   const [nickname, setNickname] = useState('');
   const [owner, setOwner] = useState('');
-  const [breed, setBreed] = useState('');
-  const [breeds, setBreeds] = useState([]);
+  const [breed, setBreed] = useState(''); // New state for breed
+  const [breeds, setBreeds] = useState([]); // State to hold the list of breeds
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Function to fetch and parse the CSV file
     const fetchBreeds = async () => {
-      try {
-        const response = await axios.get('http://localhost:5001/api/breeds');
-        setBreeds(response.data.map(b => b.Name));
-      } catch (error) {
-        console.error('Failed to fetch breeds', error);
-      }
+      const response = await axios.get('http://localhost:5001/api/breeds');
+      setBreeds(response.data.map(b => b.Name)); // Set the breeds state with the parsed data
     };
 
     fetchBreeds();
@@ -34,7 +32,7 @@ const AddDog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const id = uuidv4();
     const formData = new FormData();
     formData.append('name', name);
     formData.append('age', age);
@@ -43,15 +41,11 @@ const AddDog = () => {
     formData.append('nickname', nickname);
     formData.append('owner', owner);
     formData.append('breed', breed);
-    if (image) formData.append('image', image);
+    formData.append('image', image);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/dogs', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      dispatch(addDog(response.data));
+      await axios.post('http://localhost:5001/api/dogs', formData);
+      dispatch(addDog({ id, name, age, gender, color, nickname, owner, breed, image }));
       navigate('/');
     } catch (error) {
       console.error('Failed to add dog', error);
@@ -68,7 +62,7 @@ const AddDog = () => {
       <form onSubmit={handleSubmit} className="dog-form">
         <div className="form-row">
           <label>Dog's Name:</label>
-          <input type="text" placeholder="Dog's Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <input type="text" placeholder="Dog's Name" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
         <div className="form-row">
           <label>Age:</label>
@@ -114,6 +108,8 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
+
 
 
 

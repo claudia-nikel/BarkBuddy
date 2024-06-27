@@ -20,9 +20,8 @@ const DogDetail = () => {
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [breedDetails, setBreedDetails] = useState(null);
+  const [image, setImage] = useState(null); // Add image state
 
   useEffect(() => {
     if (dog) {
@@ -33,11 +32,7 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
-      if (dog.image) {
-        setImagePreview(`data:image/png;base64,${btoa(
-          new Uint8Array(dog.image.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        )}`);
-      }
+      setImage(dog.image); // Set image from dog data
     }
   }, [dog]);
 
@@ -45,7 +40,7 @@ const DogDetail = () => {
     const fetchBreeds = async () => {
       try {
         const response = await axios.get('http://localhost:5001/api/breeds');
-        setBreeds(response.data.map(b => b.Name));
+        setBreeds(response.data);
       } catch (error) {
         console.error('Failed to fetch breeds', error);
       }
@@ -57,7 +52,7 @@ const DogDetail = () => {
   useEffect(() => {
     const fetchBreedDetails = async () => {
       try {
-        const response = await fetch('http://localhost:5001/dog_breeds.csv');
+        const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
         const reader = response.body.getReader();
         const result = await reader.read();
         const decoder = new TextDecoder('utf-8');
@@ -77,28 +72,8 @@ const DogDetail = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('age', age);
-    formData.append('gender', gender);
-    formData.append('color', color);
-    formData.append('nickname', nickname);
-    formData.append('owner', owner);
-    formData.append('breed', breed);
-    if (image) formData.append('image', image);
-
-    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image: imagePreview }));
+    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image }));
     setEditMode(false);
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
   };
 
   if (!dog) {
@@ -118,7 +93,7 @@ const DogDetail = () => {
           <p><strong>Nickname:</strong> {nickname}</p>
           <p><strong>Owner:</strong> {owner}</p>
           <p><strong>Breed:</strong> {breed}</p>
-          {imagePreview && <img src={imagePreview} alt={name} />}
+          {image && <img src={image} alt={name} />} {/* Display the image */}
           <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
         </div>
       ) : (
@@ -159,10 +134,6 @@ const DogDetail = () => {
               ))}
             </select>
           </div>
-          <div className="form-row">
-            <label>Image:</label>
-            <input type="file" onChange={handleImageChange} />
-          </div>
           <button type="submit" className="submit-button">Save Changes</button>
         </form>
       )}
@@ -181,7 +152,7 @@ const DogDetail = () => {
             <tbody>
               <tr>
                 {Object.values(breedDetails).map((value, index) => (
-                  <td key={index}>{typeof value === 'object' ? JSON.stringify(value) : value}</td>
+                  <td key={index}>{value}</td>
                 ))}
               </tr>
             </tbody>
@@ -193,6 +164,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-
-
-

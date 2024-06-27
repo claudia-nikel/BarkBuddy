@@ -15,7 +15,6 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 const storage = multer.memoryStorage();
@@ -24,19 +23,20 @@ const upload = multer({ storage });
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     const imageData = req.file ? req.file.buffer : null;
+    const age = req.body.age ? parseInt(req.body.age, 10) : null; // Handle default value for age
     const dog = await Dog.create({
       name: req.body.name,
-      age: req.body.age,
-      gender: req.body.gender,
-      color: req.body.color,
-      nickname: req.body.nickname,
-      owner: req.body.owner,
-      breed: req.body.breed,
-      image: imageData ? Buffer.from(imageData) : null // Convert image data to Buffer
+      age: age || 0, // Default to 0 if age is not provided
+      gender: req.body.gender || 'Unknown', // Default to 'Unknown' if gender is not provided
+      color: req.body.color || 'Unknown', // Default to 'Unknown' if color is not provided
+      nickname: req.body.nickname || '', // Default to empty string if nickname is not provided
+      owner: req.body.owner || 'Unknown', // Default to 'Unknown' if owner is not provided
+      breed: req.body.breed || 'Unknown', // Default to 'Unknown' if breed is not provided
+      image: imageData
     });
     res.json(dog);
   } catch (error) {
-    console.error('Error creating dog:', error); // Add detailed logging here
+    console.error('Error creating dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -44,14 +44,19 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
 app.get('/api/dogs', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
-    res.json(dogs);
+    const formattedDogs = dogs.map(dog => {
+      return {
+        ...dog.dataValues,
+        image: dog.image ? `data:image/png;base64,${dog.image.toString('base64')}` : null
+      };
+    });
+    res.json(formattedDogs);
   } catch (error) {
-    console.error('Error fetching dogs:', error); // Add detailed logging here
+    console.error('Error fetching dogs:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Endpoint to fetch breeds
 app.get('/api/breeds', async (req, res) => {
   try {
     const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
@@ -59,12 +64,12 @@ app.get('/api/breeds', async (req, res) => {
     const results = Papa.parse(fileContent, { header: true });
     res.json(results.data);
   } catch (error) {
-    console.error('Error fetching breeds:', error); // Add detailed logging here
+    console.error('Error fetching breeds:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-sequelize.sync({ alter: true }).then(() => { // Ensure the database schema is updated
+sequelize.sync({ alter: true }).then(() => {
   app.listen(process.env.PORT || 5001, () => {
     console.log('Server is running on port 5001');
   });
