@@ -44,6 +44,7 @@ const AddDog = () => {
         breed,
         image
       });
+      console.log('Dog added successfully:', response.data); // Use the response variable
       navigate('/');
     } catch (error) {
       console.error('Failed to add dog', error);
@@ -106,4 +107,3 @@ const AddDog = () => {
 };
 
 export default AddDog;
-

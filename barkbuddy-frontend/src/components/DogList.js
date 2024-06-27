@@ -40,8 +40,10 @@ const DogList = () => {
           dogs.map(dog => (
             <li key={dog.id} className="dog-item">
               <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
-              <span>{dog.breed}</span>
-              <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
+              <div className="dog-item-right">
+                <span className="dog-breed">{dog.breed}</span>
+                <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
+              </div>
             </li>
           ))
         ) : (
@@ -53,6 +55,7 @@ const DogList = () => {
 };
 
 export default DogList;
+
 
 
 
