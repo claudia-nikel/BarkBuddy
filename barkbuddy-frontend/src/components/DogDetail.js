@@ -52,13 +52,14 @@ const DogDetail = () => {
   useEffect(() => {
     const fetchBreedDetails = async () => {
       try {
-        const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
+        const response = await fetch('http://localhost:5001/api/breeds/csv');
         const reader = response.body.getReader();
         const result = await reader.read();
         const decoder = new TextDecoder('utf-8');
         const csv = decoder.decode(result.value);
         const results = Papa.parse(csv, { header: true });
         const breedDetail = results.data.find(b => b.Name === breed);
+        console.log('Breed Details:', breedDetail); // Debug log
         setBreedDetails(breedDetail);
       } catch (error) {
         console.error('Failed to fetch breed details', error);
@@ -169,5 +170,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-
-
