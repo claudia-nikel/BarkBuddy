@@ -1,15 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import cors middleware
+const cors = require('cors');
 const sequelize = require('./config/database');
 const Dog = require('./models/Dog'); // Import the Dog model
 const app = express();
 
-// Use cors middleware and configure it to allow requests from your frontend origin
 app.use(cors({
   origin: 'http://localhost:3000' // Update this to match your frontend origin
 }));
-
 app.use(bodyParser.json());
 
 // Routes
@@ -27,4 +25,3 @@ sequelize.sync().then(() => {
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
-

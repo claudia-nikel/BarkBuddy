@@ -8,6 +8,7 @@ router.get('/', async (req, res) => {
     const dogs = await Dog.findAll();
     res.json(dogs);
   } catch (error) {
+    console.error('Failed to fetch dogs', error);
     res.status(500).json({ error: 'Failed to fetch dogs' });
   }
 });
@@ -22,6 +23,7 @@ router.get('/:id', async (req, res) => {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
+    console.error('Failed to fetch dog', error);
     res.status(500).json({ error: 'Failed to fetch dog' });
   }
 });
@@ -32,6 +34,7 @@ router.post('/', async (req, res) => {
     const dog = await Dog.create(req.body);
     res.status(201).json(dog);
   } catch (error) {
+    console.error('Failed to create dog', error);
     res.status(500).json({ error: 'Failed to create dog' });
   }
 });
@@ -47,6 +50,7 @@ router.put('/:id', async (req, res) => {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
+    console.error('Failed to update dog', error);
     res.status(500).json({ error: 'Failed to update dog' });
   }
 });
@@ -62,6 +66,7 @@ router.delete('/:id', async (req, res) => {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
+    console.error('Failed to delete dog', error);
     res.status(500).json({ error: 'Failed to delete dog' });
   }
 });
