@@ -21,7 +21,7 @@ const DogDetail = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null); // State to store image preview URL
+  const [imagePreview, setImagePreview] = useState(null);
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const DogDetail = () => {
     const fetchBreeds = async () => {
       try {
         const response = await axios.get('http://localhost:5001/api/breeds');
-        setBreeds(response.data);
+        setBreeds(response.data.map(b => b.Name));
       } catch (error) {
         console.error('Failed to fetch breeds', error);
       }
@@ -193,4 +193,6 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
+
 
