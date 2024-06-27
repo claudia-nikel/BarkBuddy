@@ -44,6 +44,36 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
   }
 });
 
+app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    const dogId = req.params.id;
+    const { name, age, gender, color, nickname, owner, breed } = req.body;
+    const imageData = req.file ? req.file.buffer : null;
+
+    const dog = await Dog.findByPk(dogId);
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
+
+    dog.name = name;
+    dog.age = age;
+    dog.gender = gender;
+    dog.color = color;
+    dog.nickname = nickname;
+    dog.owner = owner;
+    dog.breed = breed;
+    if (imageData) {
+      dog.image = imageData;
+    }
+
+    await dog.save();
+    res.json(dog);
+  } catch (error) {
+    console.error('Error updating dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/dogs', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
@@ -99,4 +129,3 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
-
