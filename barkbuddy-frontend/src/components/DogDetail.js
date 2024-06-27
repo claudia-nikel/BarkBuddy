@@ -133,7 +133,7 @@ const DogDetail = () => {
               <select value={breed} onChange={(e) => setBreed(e.target.value)}>
                 <option value="">Select Breed</option>
                 {breeds.map((breed, index) => (
-                  <option key={index} value={breed}>{breed}</option>
+                  <option key={index} value={breed.Name}>{breed.Name}</option>
                 ))}
               </select>
             </div>
@@ -157,7 +157,7 @@ const DogDetail = () => {
             <tbody>
               <tr>
                 {Object.values(breedDetails).map((value, index) => (
-                  <td key={index}>{value}</td>
+                  <td key={index}>{typeof value === 'string' ? value : JSON.stringify(value)}</td>
                 ))}
               </tr>
             </tbody>
@@ -169,4 +169,5 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
 
