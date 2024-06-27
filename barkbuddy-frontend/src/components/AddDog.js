@@ -22,16 +22,8 @@ const AddDog = () => {
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
-        const response = await fetch('http://localhost:5001/dog_breeds.csv');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const reader = response.body.getReader();
-        const result = await reader.read();
-        const decoder = new TextDecoder('utf-8');
-        const csv = decoder.decode(result.value);
-        const results = Papa.parse(csv, { header: true });
-        setBreeds(results.data.map(b => b.Name));
+        const response = await axios.get('http://localhost:5001/api/breeds');
+        setBreeds(response.data.map(b => b.Name));
       } catch (error) {
         console.error('Failed to fetch breeds', error);
       }
@@ -122,4 +114,5 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
 

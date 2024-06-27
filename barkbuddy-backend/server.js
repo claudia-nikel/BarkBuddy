@@ -4,6 +4,8 @@ const cors = require('cors');
 const sequelize = require('./config/database');
 const path = require('path');
 const multer = require('multer');
+const Papa = require('papaparse');
+const fs = require('fs');
 const Dog = require('./models/dog');
 
 const app = express();
@@ -13,7 +15,9 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// Configure multer for memory storage
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -31,6 +35,27 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
       image: imageData
     });
     res.json(dog);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/dogs', async (req, res) => {
+  try {
+    const dogs = await Dog.findAll();
+    res.json(dogs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint to fetch breeds
+app.get('/api/breeds', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const results = Papa.parse(fileContent, { header: true });
+    res.json(results.data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

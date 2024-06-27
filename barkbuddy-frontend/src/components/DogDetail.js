@@ -21,6 +21,7 @@ const DogDetail = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null); // State to store image preview URL
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const DogDetail = () => {
       setOwner(dog.owner);
       setBreed(dog.breed);
       if (dog.image) {
-        setImage(`data:image/png;base64,${btoa(
+        setImagePreview(`data:image/png;base64,${btoa(
           new Uint8Array(dog.image.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
         )}`);
       }
@@ -86,12 +87,18 @@ const DogDetail = () => {
     formData.append('breed', breed);
     if (image) formData.append('image', image);
 
-    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image }));
+    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image: imagePreview }));
     setEditMode(false);
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   if (!dog) {
@@ -111,7 +118,7 @@ const DogDetail = () => {
           <p><strong>Nickname:</strong> {nickname}</p>
           <p><strong>Owner:</strong> {owner}</p>
           <p><strong>Breed:</strong> {breed}</p>
-          {image && <img src={image} alt={name} />}
+          {imagePreview && <img src={imagePreview} alt={name} />}
           <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
         </div>
       ) : (
@@ -174,7 +181,7 @@ const DogDetail = () => {
             <tbody>
               <tr>
                 {Object.values(breedDetails).map((value, index) => (
-                  <td key={index}>{value}</td>
+                  <td key={index}>{typeof value === 'object' ? JSON.stringify(value) : value}</td>
                 ))}
               </tr>
             </tbody>
@@ -186,3 +193,4 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
