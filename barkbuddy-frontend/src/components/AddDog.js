@@ -19,7 +19,7 @@ const AddDog = () => {
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/breeds');
+        const response = await axios.get('http://localhost:5001/api/breeds');
         setBreeds(response.data);
       } catch (error) {
         console.error('Failed to fetch breeds', error);
@@ -33,7 +33,7 @@ const AddDog = () => {
     e.preventDefault();
     const id = uuidv4();
     try {
-      const response = await axios.post('http://localhost:5000/api/dogs', {
+      const response = await axios.post('http://localhost:5001/api/dogs', {
         id,
         name,
         age,
