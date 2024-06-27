@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { setDogs } from '../features/dogs/dogsSlice';
+import { deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
 
 const DogList = () => {
@@ -25,7 +26,7 @@ const DogList = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:5001/api/dogs/${id}`);
-      dispatch(setDogs(dogs.filter(dog => dog.id !== id)));
+      dispatch(deleteDog(id));
     } catch (error) {
       console.error('Failed to delete dog', error);
     }

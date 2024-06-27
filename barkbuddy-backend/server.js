@@ -8,6 +8,7 @@ const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/dog');
 
+
 const app = express();
 
 app.use(cors({
@@ -69,6 +70,26 @@ app.get('/api/breeds', async (req, res) => {
   }
 });
 
+// Add DELETE route
+app.delete('/api/dogs/:id', async (req, res) => {
+  try {
+    const dogId = req.params.id;
+    const result = await Dog.destroy({
+      where: {
+        id: dogId
+      }
+    });
+    if (result) {
+      res.status(204).send(); // No Content
+    } else {
+      res.status(404).json({ error: 'Dog not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 sequelize.sync({ alter: true }).then(() => {
   app.listen(process.env.PORT || 5001, () => {
     console.log('Server is running on port 5001');
@@ -76,4 +97,3 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
-

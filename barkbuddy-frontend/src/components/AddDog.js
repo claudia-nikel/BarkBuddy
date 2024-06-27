@@ -44,8 +44,8 @@ const AddDog = () => {
     formData.append('image', image);
 
     try {
-      await axios.post('http://localhost:5001/api/dogs', formData);
-      dispatch(addDog({ id, name, age, gender, color, nickname, owner, breed, image }));
+      const response = await axios.post('http://localhost:5001/api/dogs', formData);
+      dispatch(addDog(response.data));
       navigate('/');
     } catch (error) {
       console.error('Failed to add dog', error);
@@ -108,6 +108,7 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
 
 
 

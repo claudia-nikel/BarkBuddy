@@ -1,7 +1,4 @@
-.dog-detail-container {
-    padding: 20px;
-  }
-  
+
   .edit-button, .submit-button {
     background-color: #e63900;
     color: white;
@@ -65,4 +62,29 @@
   
   .back-button:hover {
     background-color: #bbb;
+  }
+
+  .dog-image-container {
+    flex-shrink: 0;
+    margin-left: 20px;
+  }
+  
+  .dog-image {
+    width: 150px;
+    height: auto;
+    border: 2px solid #ff4500;
+    border-radius: 8px;
+  }
+
+  .dog-detail-container {
+    padding: 20px;
+  }
+  
+  .dog-detail-content {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .dog-detail-text {
+    flex: 1;
   }

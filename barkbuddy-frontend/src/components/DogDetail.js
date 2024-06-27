@@ -85,56 +85,61 @@ const DogDetail = () => {
       <button onClick={() => window.history.back()} className="back-button">Back</button>
       <h1>Dog Details</h1>
       {!editMode ? (
-        <div>
-          <p><strong>Name:</strong> {name}</p>
-          <p><strong>Age:</strong> {age}</p>
-          <p><strong>Gender:</strong> {gender}</p>
-          <p><strong>Color:</strong> {color}</p>
-          <p><strong>Nickname:</strong> {nickname}</p>
-          <p><strong>Owner:</strong> {owner}</p>
-          <p><strong>Breed:</strong> {breed}</p>
-          {image && <img src={image} alt={name} />} {/* Display the image */}
-          <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
+        <div className="dog-detail-content">
+          <div className="dog-detail-text">
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Age:</strong> {age}</p>
+            <p><strong>Gender:</strong> {gender}</p>
+            <p><strong>Color:</strong> {color}</p>
+            <p><strong>Nickname:</strong> {nickname}</p>
+            <p><strong>Owner:</strong> {owner}</p>
+            <p><strong>Breed:</strong> {breed}</p>
+            <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
+          </div>
+          {image && <div className="dog-image-container"><img src={image} alt={name} className="dog-image" /></div>}
         </div>
       ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <label>Name:</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        <form onSubmit={handleSubmit} className="dog-detail-content">
+          <div className="dog-detail-text">
+            <div className="form-row">
+              <label>Name:</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+            <div className="form-row">
+              <label>Age:</label>
+              <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+            </div>
+            <div className="form-row">
+              <label>Gender:</label>
+              <select value={gender} onChange={(e) => setGender(e.target.value)}>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div className="form-row">
+              <label>Color:</label>
+              <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
+            </div>
+            <div className="form-row">
+              <label>Nickname:</label>
+              <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            </div>
+            <div className="form-row">
+              <label>Owner:</label>
+              <input type="text" value={owner} onChange={(e) => setOwner(e.target.value)} />
+            </div>
+            <div className="form-row">
+              <label>Breed:</label>
+              <select value={breed} onChange={(e) => setBreed(e.target.value)}>
+                <option value="">Select Breed</option>
+                {breeds.map((breed, index) => (
+                  <option key={index} value={breed}>{breed}</option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="submit-button">Save Changes</button>
           </div>
-          <div className="form-row">
-            <label>Age:</label>
-            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label>Gender:</label>
-            <select value={gender} onChange={(e) => setGender(e.target.value)}>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-          <div className="form-row">
-            <label>Color:</label>
-            <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label>Nickname:</label>
-            <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label>Owner:</label>
-            <input type="text" value={owner} onChange={(e) => setOwner(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label>Breed:</label>
-            <select value={breed} onChange={(e) => setBreed(e.target.value)}>
-              <option value="">Select Breed</option>
-              {breeds.map((breed, index) => (
-                <option key={index} value={breed}>{breed}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="submit-button">Save Changes</button>
+          {image && <div className="dog-image-container"><img src={image} alt={name} className="dog-image" /></div>}
         </form>
       )}
 
@@ -164,3 +169,4 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
