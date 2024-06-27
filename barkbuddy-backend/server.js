@@ -23,7 +23,7 @@ const upload = multer({ storage });
 
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
-    const imageData = req.file ? req.file.buffer : null; // Convert image to binary
+    const imageData = req.file ? req.file.buffer : null;
     const dog = await Dog.create({
       name: req.body.name,
       age: req.body.age,
@@ -32,10 +32,11 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
       nickname: req.body.nickname,
       owner: req.body.owner,
       breed: req.body.breed,
-      image: imageData
+      image: imageData ? Buffer.from(imageData) : null // Convert image data to Buffer
     });
     res.json(dog);
   } catch (error) {
+    console.error('Error creating dog:', error); // Add detailed logging here
     res.status(500).json({ error: error.message });
   }
 });
@@ -45,6 +46,7 @@ app.get('/api/dogs', async (req, res) => {
     const dogs = await Dog.findAll();
     res.json(dogs);
   } catch (error) {
+    console.error('Error fetching dogs:', error); // Add detailed logging here
     res.status(500).json({ error: error.message });
   }
 });
@@ -57,14 +59,16 @@ app.get('/api/breeds', async (req, res) => {
     const results = Papa.parse(fileContent, { header: true });
     res.json(results.data);
   } catch (error) {
+    console.error('Error fetching breeds:', error); // Add detailed logging here
     res.status(500).json({ error: error.message });
   }
 });
 
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => { // Ensure the database schema is updated
   app.listen(process.env.PORT || 5001, () => {
     console.log('Server is running on port 5001');
   });
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
+
