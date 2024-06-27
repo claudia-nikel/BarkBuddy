@@ -170,3 +170,4 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
