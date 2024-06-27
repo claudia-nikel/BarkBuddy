@@ -20,7 +20,7 @@ const DogDetail = () => {
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
-  const [image, setImage] = useState(null); // Add image state
+  const [image, setImage] = useState(null);
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
@@ -32,7 +32,11 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
-      setImage(dog.image); // Set image state
+      if (dog.image) {
+        setImage(`data:image/png;base64,${btoa(
+          new Uint8Array(dog.image.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        )}`);
+      }
     }
   }, [dog]);
 

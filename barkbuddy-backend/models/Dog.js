@@ -2,11 +2,6 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Dog = sequelize.define('Dog', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true
-  },
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -36,7 +31,7 @@ const Dog = sequelize.define('Dog', {
     allowNull: false
   },
   image: {
-    type: DataTypes.STRING,
+    type: DataTypes.BLOB('long'), // Use BLOB for binary data
     allowNull: true
   }
 });
