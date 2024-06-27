@@ -30,24 +30,27 @@
     text-decoration: underline;
   }
   
-  .breed-info-table {
+  .breed-details {
     margin-top: 20px;
   }
   
-  .breed-info-table table {
+  .breed-details h2 {
+    margin-bottom: 10px;
+  }
+  
+  .breed-details table {
     width: 100%;
     border-collapse: collapse;
   }
   
-  .breed-info-table th,
-  .breed-info-table td {
-    border: 1px solid #ccc;
+  .breed-details th, .breed-details td {
+    border: 1px solid #ddd;
     padding: 8px;
-    text-align: left;
   }
   
-  .breed-info-table th {
+  .breed-details th {
     background-color: #f2f2f2;
+    text-align: left;
   }
 
   .back-button {

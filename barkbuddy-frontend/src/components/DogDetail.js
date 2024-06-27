@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { updateDog } from '../features/dogs/dogsSlice';
+import axios from 'axios';
 import Papa from 'papaparse';
 import './DogDetail.css';
 
@@ -9,10 +10,8 @@ const DogDetail = () => {
   const { id } = useParams();
   const dog = useSelector(state => state.dogs.find(dog => dog.id === id));
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [editMode, setEditMode] = useState(false);
-
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -20,8 +19,8 @@ const DogDetail = () => {
   const [nickname, setNickname] = useState('');
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
-  const [breeds, setBreeds] = useState([]); // State to hold the list of breeds
-  const [breedInfo, setBreedInfo] = useState(null); // State to hold breed info for the table
+  const [breeds, setBreeds] = useState([]);
+  const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
     if (dog) {
@@ -36,31 +35,43 @@ const DogDetail = () => {
   }, [dog]);
 
   useEffect(() => {
-    // Function to fetch and parse the CSV file
     const fetchBreeds = async () => {
-      const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
-      const reader = response.body.getReader();
-      const result = await reader.read(); // raw array
-      const decoder = new TextDecoder('utf-8');
-      const csv = decoder.decode(result.value); // the csv text
-      const results = Papa.parse(csv, { header: true }); // object with { data, errors, meta }
-      setBreeds(results.data); // Set the breeds state with the parsed data
+      try {
+        const response = await axios.get('http://localhost:5001/api/breeds');
+        setBreeds(response.data);
+      } catch (error) {
+        console.error('Failed to fetch breeds', error);
+      }
     };
 
     fetchBreeds();
   }, []);
 
   useEffect(() => {
+    const fetchBreedDetails = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/dog_breeds.csv');
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const decoder = new TextDecoder('utf-8');
+        const csv = decoder.decode(result.value);
+        const results = Papa.parse(csv, { header: true });
+        const breedDetail = results.data.find(b => b.Name === breed);
+        setBreedDetails(breedDetail);
+      } catch (error) {
+        console.error('Failed to fetch breed details', error);
+      }
+    };
+
     if (breed) {
-      const selectedBreedInfo = breeds.find(b => b.Name === breed);
-      setBreedInfo(selectedBreedInfo);
+      fetchBreedDetails();
     }
-  }, [breed, breeds]);
+  }, [breed]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed }));
-    setEditMode(false); // Exit edit mode after saving changes
+    setEditMode(false);
   };
 
   if (!dog) {
@@ -69,7 +80,7 @@ const DogDetail = () => {
 
   return (
     <div className="dog-detail-container">
-      <button onClick={() => navigate('/')} className="back-button">Back</button>
+      <button onClick={() => window.history.back()} className="back-button">Back</button>
       <h1>Dog Details</h1>
       {!editMode ? (
         <div>
@@ -115,28 +126,29 @@ const DogDetail = () => {
             <label>Breed:</label>
             <select value={breed} onChange={(e) => setBreed(e.target.value)}>
               <option value="">Select Breed</option>
-              {breeds.map((b, index) => (
-                <option key={index} value={b.Name}>{b.Name}</option>
+              {breeds.map((breed, index) => (
+                <option key={index} value={breed}>{breed}</option>
               ))}
             </select>
           </div>
           <button type="submit" className="submit-button">Save Changes</button>
         </form>
       )}
-      {breedInfo && (
-        <div className="breed-info-table">
-          <h2>Breed Information: {breed}</h2>
+
+      {breedDetails && (
+        <div className="breed-details">
+          <h2>Breed Details</h2>
           <table>
             <thead>
               <tr>
-                {Object.keys(breedInfo).map((key, index) => (
+                {Object.keys(breedDetails).map((key, index) => (
                   <th key={index}>{key}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               <tr>
-                {Object.values(breedInfo).map((value, index) => (
+                {Object.values(breedDetails).map((value, index) => (
                   <td key={index}>{value}</td>
                 ))}
               </tr>
