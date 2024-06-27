@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import Papa from 'papaparse';
 import './AddDog.css';
 
 const AddDog = () => {
@@ -14,13 +16,22 @@ const AddDog = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/breeds');
-        setBreeds(response.data);
+        const response = await fetch('http://localhost:5001/dog_breeds.csv');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const decoder = new TextDecoder('utf-8');
+        const csv = decoder.decode(result.value);
+        const results = Papa.parse(csv, { header: true });
+        setBreeds(results.data.map(b => b.Name));
       } catch (error) {
         console.error('Failed to fetch breeds', error);
       }
@@ -31,20 +42,24 @@ const AddDog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = uuidv4();
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('age', age);
+    formData.append('gender', gender);
+    formData.append('color', color);
+    formData.append('nickname', nickname);
+    formData.append('owner', owner);
+    formData.append('breed', breed);
+    if (image) formData.append('image', image);
+
     try {
-      const response = await axios.post('http://localhost:5001/api/dogs', {
-        id,
-        name,
-        age,
-        gender,
-        color,
-        nickname,
-        owner,
-        breed,
-        image
+      const response = await axios.post('http://localhost:5001/api/dogs', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      console.log('Dog added successfully:', response.data); // Use the response variable
+      dispatch(addDog(response.data));
       navigate('/');
     } catch (error) {
       console.error('Failed to add dog', error);
@@ -52,7 +67,7 @@ const AddDog = () => {
   };
 
   const handleImageChange = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
+    setImage(e.target.files[0]);
   };
 
   return (
@@ -107,3 +122,4 @@ const AddDog = () => {
 };
 
 export default AddDog;
+

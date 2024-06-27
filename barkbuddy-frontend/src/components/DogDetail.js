@@ -20,6 +20,7 @@ const DogDetail = () => {
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
+  const [image, setImage] = useState(null); // Add image state
   const [breedDetails, setBreedDetails] = useState(null);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
+      setImage(dog.image); // Set image state
     }
   }, [dog]);
 
@@ -70,8 +72,22 @@ const DogDetail = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed }));
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('age', age);
+    formData.append('gender', gender);
+    formData.append('color', color);
+    formData.append('nickname', nickname);
+    formData.append('owner', owner);
+    formData.append('breed', breed);
+    if (image) formData.append('image', image);
+
+    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image }));
     setEditMode(false);
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
   };
 
   if (!dog) {
@@ -91,6 +107,7 @@ const DogDetail = () => {
           <p><strong>Nickname:</strong> {nickname}</p>
           <p><strong>Owner:</strong> {owner}</p>
           <p><strong>Breed:</strong> {breed}</p>
+          {image && <img src={image} alt={name} />}
           <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
         </div>
       ) : (
@@ -130,6 +147,10 @@ const DogDetail = () => {
                 <option key={index} value={breed}>{breed}</option>
               ))}
             </select>
+          </div>
+          <div className="form-row">
+            <label>Image:</label>
+            <input type="file" onChange={handleImageChange} />
           </div>
           <button type="submit" className="submit-button">Save Changes</button>
         </form>
