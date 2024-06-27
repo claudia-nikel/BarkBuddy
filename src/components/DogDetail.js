@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { updateDog } from '../features/dogs/dogsSlice';
 import Papa from 'papaparse';
 import './DogDetail.css';
@@ -9,6 +9,7 @@ const DogDetail = () => {
   const { id } = useParams();
   const dog = useSelector(state => state.dogs.find(dog => dog.id === id));
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [editMode, setEditMode] = useState(false);
 
@@ -68,6 +69,7 @@ const DogDetail = () => {
 
   return (
     <div className="dog-detail-container">
+      <button onClick={() => navigate('/')} className="back-button">Back</button>
       <h1>Dog Details</h1>
       {!editMode ? (
         <div>
