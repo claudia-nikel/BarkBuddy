@@ -8,13 +8,15 @@ const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/dog');
 
-
 const app = express();
 
 app.use(cors({
   origin: 'http://localhost:3000'
 }));
-app.use(bodyParser.json());
+
+// Increase the limit to 50mb or an appropriate value
+app.use(bodyParser.json({ limit: '500mb' }));
+app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -97,3 +99,4 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
+

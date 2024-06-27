@@ -3,7 +3,6 @@ const { Dog } = require('../models');
 const router = express.Router();
 const multer = require('multer');
 
-// Configure multer for image uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -58,3 +57,4 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 });
 
 module.exports = router;
+
