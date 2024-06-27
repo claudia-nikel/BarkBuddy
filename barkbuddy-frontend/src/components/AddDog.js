@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { addDog } from '../features/dogs/dogsSlice';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import Papa from 'papaparse';
 import './AddDog.css';
 
 const AddDog = () => {
@@ -13,32 +11,43 @@ const AddDog = () => {
   const [color, setColor] = useState('');
   const [nickname, setNickname] = useState('');
   const [owner, setOwner] = useState('');
-  const [breed, setBreed] = useState(''); // New state for breed
-  const [breeds, setBreeds] = useState([]); // State to hold the list of breeds
+  const [breed, setBreed] = useState('');
+  const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Function to fetch and parse the CSV file
     const fetchBreeds = async () => {
-      const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
-      const reader = response.body.getReader();
-      const result = await reader.read(); // raw array
-      const decoder = new TextDecoder('utf-8');
-      const csv = decoder.decode(result.value); // the csv text
-      const results = Papa.parse(csv, { header: true }); // object with { data, errors, meta }
-      setBreeds(results.data.map(b => b.Name)); // Set the breeds state with the parsed data
+      try {
+        const response = await axios.get('http://localhost:5000/api/breeds');
+        setBreeds(response.data);
+      } catch (error) {
+        console.error('Failed to fetch breeds', error);
+      }
     };
 
     fetchBreeds();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const id = uuidv4();
-    dispatch(addDog({ id, name, age, gender, color, nickname, owner, breed, image }));
-    navigate('/');
+    try {
+      const response = await axios.post('http://localhost:5000/api/dogs', {
+        id,
+        name,
+        age,
+        gender,
+        color,
+        nickname,
+        owner,
+        breed,
+        image
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to add dog', error);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -97,4 +106,3 @@ const AddDog = () => {
 };
 
 export default AddDog;
-
