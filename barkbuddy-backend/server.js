@@ -13,10 +13,7 @@ const app = express();
 app.use(cors({
   origin: 'http://localhost:3000'
 }));
-
-// Increase the limit to 50mb or an appropriate value
-app.use(bodyParser.json({ limit: '500mb' }));
-app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -26,15 +23,15 @@ const upload = multer({ storage });
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     const imageData = req.file ? req.file.buffer : null;
-    const age = req.body.age ? parseInt(req.body.age, 10) : null; // Handle default value for age
+    const age = req.body.age ? parseInt(req.body.age, 10) : null;
     const dog = await Dog.create({
       name: req.body.name,
-      age: age || 0, // Default to 0 if age is not provided
-      gender: req.body.gender || 'Unknown', // Default to 'Unknown' if gender is not provided
-      color: req.body.color || 'Unknown', // Default to 'Unknown' if color is not provided
-      nickname: req.body.nickname || '', // Default to empty string if nickname is not provided
-      owner: req.body.owner || 'Unknown', // Default to 'Unknown' if owner is not provided
-      breed: req.body.breed || 'Unknown', // Default to 'Unknown' if breed is not provided
+      age: age || 0,
+      gender: req.body.gender || 'Unknown',
+      color: req.body.color || 'Unknown',
+      nickname: req.body.nickname || '',
+      owner: req.body.owner || 'Unknown',
+      breed: req.body.breed || 'Unknown',
       image: imageData
     });
     res.json(dog);
@@ -44,45 +41,13 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
   }
 });
 
-app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
-  try {
-    const dogId = req.params.id;
-    const { name, age, gender, color, nickname, owner, breed } = req.body;
-    const imageData = req.file ? req.file.buffer : null;
-
-    const dog = await Dog.findByPk(dogId);
-    if (!dog) {
-      return res.status(404).json({ error: 'Dog not found' });
-    }
-
-    dog.name = name;
-    dog.age = age;
-    dog.gender = gender;
-    dog.color = color;
-    dog.nickname = nickname;
-    dog.owner = owner;
-    dog.breed = breed;
-    if (imageData) {
-      dog.image = imageData;
-    }
-
-    await dog.save();
-    res.json(dog);
-  } catch (error) {
-    console.error('Error updating dog:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 app.get('/api/dogs', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
-    const formattedDogs = dogs.map(dog => {
-      return {
-        ...dog.dataValues,
-        image: dog.image ? `data:image/png;base64,${dog.image.toString('base64')}` : null
-      };
-    });
+    const formattedDogs = dogs.map(dog => ({
+      ...dog.dataValues,
+      image: dog.image ? `data:image/png;base64,${dog.image.toString('base64')}` : null
+    }));
     res.json(formattedDogs);
   } catch (error) {
     console.error('Error fetching dogs:', error);
@@ -102,7 +67,6 @@ app.get('/api/breeds', async (req, res) => {
   }
 });
 
-// Add DELETE route
 app.delete('/api/dogs/:id', async (req, res) => {
   try {
     const dogId = req.params.id;
@@ -112,12 +76,43 @@ app.delete('/api/dogs/:id', async (req, res) => {
       }
     });
     if (result) {
-      res.status(204).send(); // No Content
+      res.status(204).send();
     } else {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
     console.error('Error deleting dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    const dogId = req.params.id;
+    const { name, age, gender, color, nickname, owner, breed } = req.body;
+    const imageData = req.file ? req.file.buffer : null;
+
+    const dog = await Dog.findByPk(dogId);
+
+    if (dog) {
+      dog.name = name || dog.name;
+      dog.age = age ? parseInt(age, 10) : dog.age;
+      dog.gender = gender || dog.gender;
+      dog.color = color || dog.color;
+      dog.nickname = nickname || dog.nickname;
+      dog.owner = owner || dog.owner;
+      dog.breed = breed || dog.breed;
+      if (imageData) {
+        dog.image = imageData;
+      }
+
+      await dog.save();
+      res.json(dog);
+    } else {
+      res.status(404).json({ error: 'Dog not found' });
+    }
+  } catch (error) {
+    console.error('Error updating dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -129,3 +124,4 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.log('Error syncing database:', error);
 });
+
