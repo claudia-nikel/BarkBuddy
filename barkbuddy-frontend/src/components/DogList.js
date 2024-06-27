@@ -1,35 +1,19 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { setDogs } from '../features/dogs/dogsSlice';
-import { deleteDog } from '../features/dogs/dogsSlice';
+import { fetchDogs, deleteDog } from '../features/dogs/dogsSlice'; // Import fetchDogs
 import './DogList.css';
 
 const DogList = () => {
-  const dogs = useSelector(state => state.dogs);
+  const dogs = useSelector((state) => state.dogs);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchDogs = async () => {
-      try {
-        const response = await axios.get('http://localhost:5001/api/dogs'); // Ensure port matches your backend server port
-        dispatch(setDogs(response.data));
-      } catch (error) {
-        console.error('Failed to fetch dogs', error);
-      }
-    };
-
-    fetchDogs();
+    dispatch(fetchDogs()); // Dispatch fetchDogs on component mount
   }, [dispatch]);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5001/api/dogs/${id}`);
-      dispatch(deleteDog(id));
-    } catch (error) {
-      console.error('Failed to delete dog', error);
-    }
+  const handleDelete = (id) => {
+    dispatch(deleteDog(id));
   };
 
   return (
@@ -38,13 +22,11 @@ const DogList = () => {
       <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
       <ul>
         {dogs && dogs.length > 0 ? (
-          dogs.map(dog => (
+          dogs.map((dog) => (
             <li key={dog.id} className="dog-item">
               <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
-              <div className="dog-item-right">
-                <span className="dog-breed">{dog.breed}</span>
-                <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
-              </div>
+              <span className="dog-breed">{dog.breed}</span>
+              <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
             </li>
           ))
         ) : (

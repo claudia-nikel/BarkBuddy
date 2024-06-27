@@ -21,7 +21,7 @@ router.post('/', upload.single('image'), async (req, res) => {
   const image = req.file ? req.file.buffer : null;
 
   try {
-    const newDog = await Dog.create({ id, name, age, gender, color, nickname, owner, breed, image });
+    const newDog = await Dog.create({ name, age, gender, color, nickname, owner, breed, image });
     res.json(newDog);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create dog' });
