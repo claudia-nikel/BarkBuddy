@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { updateDog } from '../features/dogs/dogsSlice'; // Import the updateDog action
+import { updateDog } from '../features/dogs/dogsSlice';
+import Papa from 'papaparse';
 import './DogDetail.css';
 
 const DogDetail = () => {
@@ -18,6 +19,8 @@ const DogDetail = () => {
   const [nickname, setNickname] = useState('');
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
+  const [breeds, setBreeds] = useState([]); // State to hold the list of breeds
+  const [breedInfo, setBreedInfo] = useState(null); // State to hold breed info for the table
 
   useEffect(() => {
     if (dog) {
@@ -30,6 +33,28 @@ const DogDetail = () => {
       setBreed(dog.breed);
     }
   }, [dog]);
+
+  useEffect(() => {
+    // Function to fetch and parse the CSV file
+    const fetchBreeds = async () => {
+      const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
+      const reader = response.body.getReader();
+      const result = await reader.read(); // raw array
+      const decoder = new TextDecoder('utf-8');
+      const csv = decoder.decode(result.value); // the csv text
+      const results = Papa.parse(csv, { header: true }); // object with { data, errors, meta }
+      setBreeds(results.data); // Set the breeds state with the parsed data
+    };
+
+    fetchBreeds();
+  }, []);
+
+  useEffect(() => {
+    if (breed) {
+      const selectedBreedInfo = breeds.find(b => b.Name === breed);
+      setBreedInfo(selectedBreedInfo);
+    }
+  }, [breed, breeds]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,10 +111,36 @@ const DogDetail = () => {
           </div>
           <div className="form-row">
             <label>Breed:</label>
-            <input type="text" value={breed} onChange={(e) => setBreed(e.target.value)} />
+            <select value={breed} onChange={(e) => setBreed(e.target.value)}>
+              <option value="">Select Breed</option>
+              {breeds.map((b, index) => (
+                <option key={index} value={b.Name}>{b.Name}</option>
+              ))}
+            </select>
           </div>
           <button type="submit" className="submit-button">Save Changes</button>
         </form>
+      )}
+      {breedInfo && (
+        <div className="breed-info-table">
+          <h2>Breed Information: {breed}</h2>
+          <table>
+            <thead>
+              <tr>
+                {Object.keys(breedInfo).map((key, index) => (
+                  <th key={index}>{key}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {Object.values(breedInfo).map((value, index) => (
+                  <td key={index}>{value}</td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

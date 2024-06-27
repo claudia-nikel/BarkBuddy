@@ -24,3 +24,28 @@
     margin-bottom: 10px;
   }
   
+  .breed-link {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .breed-info-table {
+    margin-top: 20px;
+  }
+  
+  .breed-info-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .breed-info-table th,
+  .breed-info-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .breed-info-table th {
+    background-color: #f2f2f2;
+  }

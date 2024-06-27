@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import Papa from 'papaparse';
 import './AddDog.css';
-import breeds from './breeds'; // Import the breeds list
 
 const AddDog = () => {
   const [name, setName] = useState('');
@@ -14,9 +14,25 @@ const AddDog = () => {
   const [nickname, setNickname] = useState('');
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState(''); // New state for breed
+  const [breeds, setBreeds] = useState([]); // State to hold the list of breeds
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Function to fetch and parse the CSV file
+    const fetchBreeds = async () => {
+      const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
+      const reader = response.body.getReader();
+      const result = await reader.read(); // raw array
+      const decoder = new TextDecoder('utf-8');
+      const csv = decoder.decode(result.value); // the csv text
+      const results = Papa.parse(csv, { header: true }); // object with { data, errors, meta }
+      setBreeds(results.data.map(b => b.Name)); // Set the breeds state with the parsed data
+    };
+
+    fetchBreeds();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,3 +97,4 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
