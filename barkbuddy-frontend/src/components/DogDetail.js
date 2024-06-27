@@ -52,7 +52,7 @@ const DogDetail = () => {
   useEffect(() => {
     const fetchBreedDetails = async () => {
       try {
-        const response = await fetch('http://localhost:5001/public/dog_breeds.csv');
+        const response = await fetch('http://localhost:5001/api/breeds');
         const reader = response.body.getReader();
         const result = await reader.read();
         const decoder = new TextDecoder('utf-8');
