@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Papa from 'papaparse';
 import './AddDog.css';
 
 const AddDog = () => {
@@ -16,6 +15,7 @@ const AddDog = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,6 +34,9 @@ const AddDog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('age', age);
@@ -52,6 +55,8 @@ const AddDog = () => {
       navigate('/');
     } catch (error) {
       console.error('Failed to add dog', error);
+    } finally {
+      setIsSubmitting(false); // Re-enable the submit button
     }
   };
 
@@ -104,13 +109,14 @@ const AddDog = () => {
           <label>Image:</label>
           <input type="file" onChange={handleImageChange} />
         </div>
-        <button type="submit" className="submit-button">Submit</button>
+        <button type="submit" className="submit-button" disabled={isSubmitting}>Submit</button>
       </form>
     </div>
   );
 };
 
 export default AddDog;
+
 
 
 

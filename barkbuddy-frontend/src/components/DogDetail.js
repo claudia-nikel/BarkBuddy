@@ -8,7 +8,7 @@ import './DogDetail.css';
 
 const DogDetail = () => {
   const { id } = useParams();
-  const dog = useSelector(state => state.dogs.find(dog => dog.id === id));
+  const dog = useSelector(state => state.dogs.dogs.find(dog => dog.id === id));
   const dispatch = useDispatch();
 
   const [editMode, setEditMode] = useState(false);
@@ -52,7 +52,7 @@ const DogDetail = () => {
   useEffect(() => {
     const fetchBreedDetails = async () => {
       try {
-        const response = await fetch(`${process.env.PUBLIC_URL}/dog_breeds.csv`);
+        const response = await fetch('http://localhost:5001/public/dog_breeds.csv');
         const reader = response.body.getReader();
         const result = await reader.read();
         const decoder = new TextDecoder('utf-8');
@@ -72,18 +72,7 @@ const DogDetail = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedDog = {
-      id,
-      name,
-      age,
-      gender,
-      color,
-      nickname,
-      owner,
-      breed,
-      image
-    };
-    dispatch(updateDog(updatedDog));
+    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image }));
     setEditMode(false);
   };
 
@@ -180,4 +169,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-

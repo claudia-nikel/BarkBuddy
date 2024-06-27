@@ -22,27 +22,42 @@ export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id) => {
   return id;
 });
 
+export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async () => {
+  const response = await axios.get('http://localhost:5001/api/dogs/count');
+  return response.data.count;
+});
+
 const dogsSlice = createSlice({
   name: 'dogs',
-  initialState: [],
+  initialState: {
+    dogs: [],
+    count: 0
+  },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchDogs.fulfilled, (state, action) => {
-        return action.payload;
+        state.dogs = action.payload;
       })
       .addCase(addDog.fulfilled, (state, action) => {
-        state.push(action.payload);
+        state.dogs.push(action.payload);
+        state.count += 1; // Increment count on add
       })
       .addCase(updateDog.fulfilled, (state, action) => {
-        const index = state.findIndex((dog) => dog.id === action.payload.id);
-        state[index] = action.payload;
+        const index = state.dogs.findIndex((dog) => dog.id === action.payload.id);
+        state.dogs[index] = action.payload;
       })
       .addCase(deleteDog.fulfilled, (state, action) => {
-        return state.filter((dog) => dog.id !== action.payload);
+        state.dogs = state.dogs.filter((dog) => dog.id !== action.payload);
+        state.count -= 1; // Decrement count on delete
+      })
+      .addCase(fetchDogCount.fulfilled, (state, action) => {
+        state.count = action.payload;
       });
   },
 });
 
 export default dogsSlice.reducer;
+
+
 

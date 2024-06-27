@@ -117,6 +117,16 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+app.get('/api/dogs/count', async (req, res) => {
+  try {
+    const count = await Dog.count();
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching dog count:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 sequelize.sync({ alter: true }).then(() => {
   app.listen(process.env.PORT || 5001, () => {
     console.log('Server is running on port 5001');
