@@ -52,8 +52,17 @@
     color: #e63900;
     text-shadow: 2px 2px 8px rgba(0,0,0,0);
 }
+
+.dog-info {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+  }
+
 .dog-breed {
-    margin-right: 10px; /* Add some space between breed and delete button */
+    color: #777;
+    margin-right: 10px;
   }
   
 .delete-button {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchDogs, deleteDog } from '../features/dogs/dogsSlice'; // Import fetchDogs
+import { fetchDogs, deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
 
 const DogList = () => {
@@ -9,7 +9,7 @@ const DogList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchDogs()); // Dispatch fetchDogs on component mount
+    dispatch(fetchDogs());
   }, [dispatch]);
 
   const handleDelete = (id) => {
@@ -24,7 +24,9 @@ const DogList = () => {
         {dogs && dogs.length > 0 ? (
           dogs.map((dog) => (
             <li key={dog.id} className="dog-item">
-              <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
+              <div className="dog-info">
+                <Link to={`/dog/${dog.id}`} className="dog-name">{dog.name}</Link>
+              </div>
               <span className="dog-breed">{dog.breed}</span>
               <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
             </li>
@@ -38,6 +40,8 @@ const DogList = () => {
 };
 
 export default DogList;
+
+
 
 
 
