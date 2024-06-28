@@ -10,9 +10,12 @@ const Dog = require('./models/dog');
 
 const app = express();
 
+// CORS configuration
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: 'https://barkbuddydog.netlify.app',
+  optionsSuccessStatus: 200
 }));
+
 app.use(bodyParser.json({ limit: '500mb' }));
 
 app.use(express.static(path.join(__dirname, 'public')));
