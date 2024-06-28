@@ -19,10 +19,12 @@ const AddDog = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/breeds');
+        const response = await axios.get(`${apiUrl}/api/breeds`);
         setBreeds(response.data);
       } catch (error) {
         console.error('Failed to fetch breeds', error);
@@ -30,7 +32,7 @@ const AddDog = () => {
     };
 
     fetchBreeds();
-  }, []);
+  }, [apiUrl]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ const AddDog = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/dogs', formData);
+      const response = await axios.post(`${apiUrl}/api/dogs`, formData);
       dispatch(addDog(response.data));
       navigate('/');
     } catch (error) {
@@ -116,6 +118,8 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
+
 
 
 

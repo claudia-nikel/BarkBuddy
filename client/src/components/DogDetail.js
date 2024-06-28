@@ -23,6 +23,8 @@ const DogDetail = () => {
   const [breedDetails, setBreedDetails] = useState(null);
   const [image, setImage] = useState(null); // Add image state
 
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
   useEffect(() => {
     if (dog) {
       setName(dog.name);
@@ -39,7 +41,7 @@ const DogDetail = () => {
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/breeds');
+        const response = await axios.get(`${apiUrl}/api/breeds`);
         setBreeds(response.data);
       } catch (error) {
         console.error('Failed to fetch breeds', error);
@@ -47,12 +49,12 @@ const DogDetail = () => {
     };
 
     fetchBreeds();
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     const fetchBreedDetails = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/breeds');
+        const response = await fetch(`${apiUrl}/api/breeds`);
         const reader = response.body.getReader();
         const result = await reader.read();
         const decoder = new TextDecoder('utf-8');
@@ -68,7 +70,7 @@ const DogDetail = () => {
     if (breed) {
       fetchBreedDetails();
     }
-  }, [breed]);
+  }, [breed, apiUrl]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
