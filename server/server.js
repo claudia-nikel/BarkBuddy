@@ -14,7 +14,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000', // Update with your Netlify URL
+  origin: process.env.CORS_ORIGIN || 'https://barkbuddydog.netlify.app', // Netlify URL
   optionsSuccessStatus: 200
 }));
 
