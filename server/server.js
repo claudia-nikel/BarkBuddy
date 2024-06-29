@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const sequelize = require('./config/database');
+const sequelize = require('./config/database'); // Ensure this file uses environment variables
 const path = require('path');
 const multer = require('multer');
 const Papa = require('papaparse');
