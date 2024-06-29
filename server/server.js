@@ -8,16 +8,17 @@ const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/dog');
 
+require('dotenv').config(); // Load environment variables from .env file
+
 const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: 'https://barkbuddydog.netlify.app',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000', // Update with your Netlify URL
   optionsSuccessStatus: 200
 }));
 
-app.use(bodyParser.json({ limit: '500mb' }));
-
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const storage = multer.memoryStorage();
@@ -131,10 +132,11 @@ app.get('/api/dogs/count', async (req, res) => {
 });
 
 sequelize.sync({ alter: true }).then(() => {
-  app.listen(process.env.PORT || 5001, () => {
-    console.log('Server is running on port 5001');
+  const PORT = process.env.PORT || 8080; // Ensure your application listens on the correct port
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
 }).catch(error => {
-  console.log('Error syncing database:', error);
+  console.error('Error syncing database:', error);
 });
 
