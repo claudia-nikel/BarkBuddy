@@ -19,7 +19,7 @@ const AddDog = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchBreeds = async () => {

@@ -23,7 +23,7 @@ const DogDetail = () => {
   const [breedDetails, setBreedDetails] = useState(null);
   const [image, setImage] = useState(null); // Add image state
 
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (dog) {
