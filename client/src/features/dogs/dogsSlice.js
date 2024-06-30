@@ -5,27 +5,27 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 // Thunks for async actions
 export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async () => {
-  const response = await axios.get(`${apiUrl}/dogs`);
+  const response = await axios.get(`${apiUrl}/api/dogs`);
   return response.data;
 });
 
 export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
-  const response = await axios.post(`${apiUrl}/dogs`, dog);
+  const response = await axios.post(`${apiUrl}/api/dogs`, dog);
   return response.data;
 });
 
 export const updateDog = createAsyncThunk('dogs/updateDog', async (dog) => {
-  const response = await axios.put(`${apiUrl}/dogs/${dog.id}`, dog);
+  const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog);
   return response.data;
 });
 
 export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id) => {
-  await axios.delete(`${apiUrl}/dogs/${id}`);
+  await axios.delete(`${apiUrl}/api/dogs/${id}`);
   return id;
 });
 
 export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async () => {
-  const response = await axios.get(`${apiUrl}/dogs/count`);
+  const response = await axios.get(`${apiUrl}/api/dogs/count`);
   return response.data.count;
 });
 
@@ -60,4 +60,3 @@ const dogsSlice = createSlice({
 });
 
 export default dogsSlice.reducer;
-
