@@ -1,29 +1,31 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 // Thunks for async actions
 export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async () => {
-  const response = await axios.get('http://localhost:5001/api/dogs');
+  const response = await axios.get(`${apiUrl}/dogs`);
   return response.data;
 });
 
 export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
-  const response = await axios.post('http://localhost:5001/api/dogs', dog);
+  const response = await axios.post(`${apiUrl}/dogs`, dog);
   return response.data;
 });
 
 export const updateDog = createAsyncThunk('dogs/updateDog', async (dog) => {
-  const response = await axios.put(`http://localhost:5001/api/dogs/${dog.id}`, dog);
+  const response = await axios.put(`${apiUrl}/dogs/${dog.id}`, dog);
   return response.data;
 });
 
 export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id) => {
-  await axios.delete(`http://localhost:5001/api/dogs/${id}`);
+  await axios.delete(`${apiUrl}/dogs/${id}`);
   return id;
 });
 
 export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async () => {
-  const response = await axios.get('http://localhost:5001/api/dogs/count');
+  const response = await axios.get(`${apiUrl}/dogs/count`);
   return response.data.count;
 });
 
@@ -58,6 +60,4 @@ const dogsSlice = createSlice({
 });
 
 export default dogsSlice.reducer;
-
-
 
