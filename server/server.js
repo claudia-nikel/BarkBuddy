@@ -24,6 +24,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// Define a root route
+app.get('/', (req, res) => {
+  res.send('Welcome to BarkBuddy!');
+});
+
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     const imageData = req.file ? req.file.buffer : null;
