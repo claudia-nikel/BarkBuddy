@@ -4,7 +4,7 @@ import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import DogDetail from './components/DogDetail';
 import UserDogPage from './components/UserDogPage';
-import './App.css'; // Assuming you have a global CSS file
+import './App.css'; // Assuming you have a global CSS file.
 
 const App = () => {
   return (
