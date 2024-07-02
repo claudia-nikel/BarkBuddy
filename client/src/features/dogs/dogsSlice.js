@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+//save REACT_APP_API_URL in env variable
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // Thunks for async actions
@@ -13,6 +14,7 @@ export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
   const response = await axios.post(`${apiUrl}/api/dogs`, dog);
   return response.data;
 });
+
 
 export const updateDog = createAsyncThunk('dogs/updateDog', async (dog) => {
   const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog);
