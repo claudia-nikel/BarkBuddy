@@ -7,10 +7,21 @@ const multer = require('multer');
 const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/dog');
+const aws = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
+
+// AWS S3 configuration
+aws.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+
+const s3 = new aws.S3();
 
 // CORS configuration
 const allowedOrigins = [
@@ -19,12 +30,12 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
+  origin: function (origin, callback) {
     // allow requests with no origin - like mobile apps or curl requests
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
+        'allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
@@ -47,18 +58,34 @@ app.get('/', (req, res) => {
 
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
-    const imageData = req.file ? req.file.buffer : null;
-    const age = req.body.age ? parseInt(req.body.age, 10) : null;
+    const { name, age, gender, color, nickname, owner, breed } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const s3Params = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: `${uuidv4()}-${file.originalname}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: 'public-read' // Make the file publicly accessible
+    };
+
+    const s3Response = await s3.upload(s3Params).promise();
+
     const dog = await Dog.create({
-      name: req.body.name,
-      age: age || 0,
-      gender: req.body.gender || 'Unknown',
-      color: req.body.color || 'Unknown',
-      nickname: req.body.nickname || '',
-      owner: req.body.owner || 'Unknown',
-      breed: req.body.breed || 'Unknown',
-      image: imageData
+      name,
+      age: age ? parseInt(age, 10) : null,
+      gender: gender || 'Unknown',
+      color: color || 'Unknown',
+      nickname: nickname || '',
+      owner: owner || 'Unknown',
+      breed: breed || 'Unknown',
+      image_url: s3Response.Location // Save the S3 URL
     });
+
     res.json(dog);
   } catch (error) {
     console.error('Error creating dog:', error);
@@ -69,11 +96,7 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
 app.get('/api/dogs', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
-    const formattedDogs = dogs.map(dog => ({
-      ...dog.dataValues,
-      image: dog.image ? `data:image/png;base64,${dog.image.toString('base64')}` : null
-    }));
-    res.json(formattedDogs);
+    res.json(dogs);
   } catch (error) {
     console.error('Error fetching dogs:', error);
     res.status(500).json({ error: error.message });
@@ -115,7 +138,7 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
   try {
     const dogId = req.params.id;
     const { name, age, gender, color, nickname, owner, breed } = req.body;
-    const imageData = req.file ? req.file.buffer : null;
+    const file = req.file;
 
     const dog = await Dog.findByPk(dogId);
 
@@ -127,8 +150,18 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
       dog.nickname = nickname || dog.nickname;
       dog.owner = owner || dog.owner;
       dog.breed = breed || dog.breed;
-      if (imageData) {
-        dog.image = imageData;
+
+      if (file) {
+        const s3Params = {
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: `${uuidv4()}-${file.originalname}`,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+          ACL: 'public-read' // Make the file publicly accessible
+        };
+
+        const s3Response = await s3.upload(s3Params).promise();
+        dog.image_url = s3Response.Location; // Update the S3 URL
       }
 
       await dog.save();
@@ -160,3 +193,4 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+

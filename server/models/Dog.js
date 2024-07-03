@@ -2,44 +2,38 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Dog = sequelize.define('Dog', {
-  id: {
-    type: DataTypes.UUID, // Use UUID for unique id
-    defaultValue: DataTypes.UUIDV4, // Automatically generate UUID
-    primaryKey: true,
-    allowNull: false,
-  },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   age: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true
   },
   gender: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true
   },
   color: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true
   },
   nickname: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: true
   },
   owner: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true
   },
   breed: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true
   },
-  image: {
-    type: DataTypes.BLOB('long'), // Define as BLOB
-    allowNull: true,
-  },
+  image_url: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 });
 
 module.exports = Dog;
