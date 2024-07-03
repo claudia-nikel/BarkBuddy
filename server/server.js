@@ -13,8 +13,22 @@ require('dotenv').config(); // Load environment variables from .env file
 const app = express();
 
 // CORS configuration
+const allowedOrigins = [
+  'https://barkbuddydog.com',
+  'https://barkbuddydog.netlify.app'
+];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'https://barkbuddydog.netlify.app', // Netlify URL
+  origin: function(origin, callback){
+    // allow requests with no origin - like mobile apps or curl requests
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Enable cookies and other credentials
   optionsSuccessStatus: 200
