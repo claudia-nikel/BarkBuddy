@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Save REACT_APP_API_URL in env variable
+//save REACT_APP_API_URL in env variable
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // Thunks for async actions
@@ -11,36 +11,13 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async () => {
 });
 
 export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
-  const formData = new FormData();
-  for (const key in dog) {
-    if (key === 'image') {
-      formData.append('image', dog[key]);
-    } else {
-      formData.append(key, dog[key]);
-    }
-  }
-  const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+  const response = await axios.post(`${apiUrl}/api/dogs`, dog);
   return response.data;
 });
 
+
 export const updateDog = createAsyncThunk('dogs/updateDog', async (dog) => {
-  const formData = new FormData();
-  for (const key in dog) {
-    if (key === 'image') {
-      formData.append('image', dog[key]);
-    } else {
-      formData.append(key, dog[key]);
-    }
-  }
-  const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+  const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog);
   return response.data;
 });
 
@@ -58,23 +35,13 @@ const dogsSlice = createSlice({
   name: 'dogs',
   initialState: {
     dogs: [],
-    count: 0,
-    status: 'idle',
-    error: null
+    count: 0
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchDogs.pending, (state) => {
-        state.status = 'loading';
-      })
       .addCase(fetchDogs.fulfilled, (state, action) => {
-        state.status = 'succeeded';
         state.dogs = action.payload;
-      })
-      .addCase(fetchDogs.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
       })
       .addCase(addDog.fulfilled, (state, action) => {
         state.dogs.push(action.payload);
@@ -95,4 +62,3 @@ const dogsSlice = createSlice({
 });
 
 export default dogsSlice.reducer;
-
