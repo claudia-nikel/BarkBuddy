@@ -14,7 +14,9 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'https://barkbuddydog.netlify.app', // Netlify URL
+  origin: process.env.CORS_ORIGIN || 'https://barkbuddydog.com', // Netlify URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Enable cookies and other credentials
   optionsSuccessStatus: 200
 }));
 
