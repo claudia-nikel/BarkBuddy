@@ -6,7 +6,7 @@ const path = require('path');
 const multer = require('multer');
 const Papa = require('papaparse');
 const fs = require('fs');
-const Dog = require('./models/dog');
+const Dog = require('./models/Dog');
 const dotenv = require('dotenv');
 
 // Load environment variables from the appropriate .env file
