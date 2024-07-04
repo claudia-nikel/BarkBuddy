@@ -34,7 +34,7 @@ const AddDog = () => {
     fetchBreeds();
   }, [apiUrl]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isSubmitting) return; // Prevent multiple submissions
     setIsSubmitting(true);
@@ -51,15 +51,17 @@ const AddDog = () => {
       formData.append('image', image);
     }
 
-    try {
-      const response = await axios.post(`${apiUrl}/api/dogs`, formData);
-      dispatch(addDog(response.data));
-      navigate('/');
-    } catch (error) {
-      console.error('Failed to add dog', error);
-    } finally {
-      setIsSubmitting(false); // Re-enable the submit button
-    }
+    dispatch(addDog(formData))
+      .unwrap() // handle the returned promise
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error('Failed to add dog', error);
+      })
+      .finally(() => {
+        setIsSubmitting(false); // Re-enable the submit button
+      });
   };
 
   const handleImageChange = (e) => {
@@ -118,6 +120,7 @@ const AddDog = () => {
 };
 
 export default AddDog;
+
 
 
 
