@@ -4,8 +4,8 @@
   "description": "Backend for BarkBuddy",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "NODE_ENV=production node server.js",
+    "dev": "NODE_ENV=development nodemon server.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -23,3 +23,4 @@
   "author": "Your Name",
   "license": "MIT"
 }
+

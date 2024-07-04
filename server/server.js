@@ -7,15 +7,19 @@ const multer = require('multer');
 const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/dog');
+const dotenv = require('dotenv');
 
-require('dotenv').config(); // Load environment variables from .env file
+// Load environment variables from the appropriate .env file
+const env = process.env.NODE_ENV || 'development';
+dotenv.config({ path: path.resolve(__dirname, `.env.${env}`) });
 
 const app = express();
 
 // CORS configuration
 const allowedOrigins = [
   'https://barkbuddydog.com',
-  'https://barkbuddydog.netlify.app'
+  'https://barkbuddydog.netlify.app',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
@@ -160,3 +164,4 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+
