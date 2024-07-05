@@ -22,6 +22,7 @@ const DogDetail = () => {
   const [breeds, setBreeds] = useState([]);
   const [breedDetails, setBreedDetails] = useState(null);
   const [image, setImage] = useState(null); // Add image state
+  const [imagePreview, setImagePreview] = useState(null); // For image preview
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -35,6 +36,7 @@ const DogDetail = () => {
       setOwner(dog.owner);
       setBreed(dog.breed);
       setImage(dog.image); // Set image from dog data
+      setImagePreview(dog.image); // Set preview for existing image
     }
   }, [dog]);
 
@@ -72,9 +74,26 @@ const DogDetail = () => {
     }
   }, [breed, apiUrl]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file)); // Set preview for the new image
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image }));
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('age', age);
+    formData.append('gender', gender);
+    formData.append('color', color);
+    formData.append('nickname', nickname);
+    formData.append('owner', owner);
+    formData.append('breed', breed);
+    if (image) {
+      formData.append('image', image);
+    }
+    dispatch(updateDog({ id, formData }));
     setEditMode(false);
   };
 
@@ -98,7 +117,7 @@ const DogDetail = () => {
             <p><strong>Breed:</strong> {breed}</p>
             <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
           </div>
-          {image && <div className="dog-image-container"><img src={image} alt={name} className="dog-image" /></div>}
+          {imagePreview && <div className="dog-image-container"><img src={imagePreview} alt={name} className="dog-image" /></div>}
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="dog-detail-content">
@@ -139,9 +158,13 @@ const DogDetail = () => {
                 ))}
               </select>
             </div>
+            <div className="form-row">
+              <label>Image:</label>
+              <input type="file" onChange={handleImageChange} />
+            </div>
             <button type="submit" className="submit-button">Save Changes</button>
           </div>
-          {image && <div className="dog-image-container"><img src={image} alt={name} className="dog-image" /></div>}
+          {imagePreview && <div className="dog-image-container"><img src={imagePreview} alt={name} className="dog-image" /></div>}
         </form>
       )}
 

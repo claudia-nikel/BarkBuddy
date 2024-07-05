@@ -1,8 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import dogsReducer from '../features/dogs/dogsSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     dogs: dogsReducer,
   },
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
+
+export default store;
+
