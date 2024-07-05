@@ -35,7 +35,7 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
-      setImagePreview(dog.image);
+      setImagePreview(dog.image); // Set image preview to the image URL
     }
   }, [dog]);
 
@@ -102,6 +102,7 @@ const DogDetail = () => {
       });
       dispatch(updateDog(response.data));
       setEditMode(false);
+      setImagePreview(response.data.image); // Update image preview with the new URL
     } catch (error) {
       console.error('Failed to update dog', error);
     }
@@ -204,8 +205,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-
-
-
-
-

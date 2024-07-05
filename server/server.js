@@ -70,7 +70,8 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ACL: 'public-read' // Set the ACL to public-read
       };
 
       const uploadResult = await s3.upload(params).promise();
@@ -147,7 +148,8 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ACL: 'public-read' // Set the ACL to public-read
       };
 
       const uploadResult = await s3.upload(params).promise();
@@ -197,5 +199,6 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+
 
 
