@@ -1,9 +1,11 @@
+// server.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./config/database');
 const path = require('path');
 const multer = require('multer');
+const AWS = require('aws-sdk');
 const Papa = require('papaparse');
 const fs = require('fs');
 const Dog = require('./models/Dog');
@@ -23,23 +25,30 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
-    // allow requests with no origin - like mobile apps or curl requests
+  origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
+        'allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable cookies and other credentials
+  credentials: true,
   optionsSuccessStatus: 200
 }));
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -57,18 +66,32 @@ app.get('/', (req, res) => {
 
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
-    const imageData = req.file ? req.file.buffer : null;
-    const age = req.body.age ? parseInt(req.body.age, 10) : null;
+    const { name, age, gender, color, nickname, owner, breed } = req.body;
+    let imageUrl = null;
+
+    if (req.file) {
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: `images/${Date.now()}-${req.file.originalname}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
+
+      const uploadResult = await s3.upload(params).promise();
+      imageUrl = uploadResult.Location;
+    }
+
     const dog = await Dog.create({
-      name: req.body.name,
-      age: age || 0,
-      gender: req.body.gender || 'Unknown',
-      color: req.body.color || 'Unknown',
-      nickname: req.body.nickname || '',
-      owner: req.body.owner || 'Unknown',
-      breed: req.body.breed || 'Unknown',
-      image: imageData
+      name,
+      age: parseInt(age, 10) || 0,
+      gender: gender || 'Unknown',
+      color: color || 'Unknown',
+      nickname: nickname || '',
+      owner: owner || 'Unknown',
+      breed: breed || 'Unknown',
+      image: imageUrl,
     });
+
     res.json(dog);
   } catch (error) {
     console.error('Error creating dog:', error);
@@ -76,14 +99,51 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
   }
 });
 
+app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    const dogId = req.params.id;
+    const { name, age, gender, color, nickname, owner, breed } = req.body;
+    const dog = await Dog.findByPk(dogId);
+
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
+
+    let imageUrl = dog.image;
+
+    if (req.file) {
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: `images/${Date.now()}-${req.file.originalname}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
+
+      const uploadResult = await s3.upload(params).promise();
+      imageUrl = uploadResult.Location;
+    }
+
+    dog.name = name || dog.name;
+    dog.age = age ? parseInt(age, 10) : dog.age;
+    dog.gender = gender || dog.gender;
+    dog.color = color || dog.color;
+    dog.nickname = nickname || dog.nickname;
+    dog.owner = owner || dog.owner;
+    dog.breed = breed || dog.breed;
+    dog.image = imageUrl;
+
+    await dog.save();
+    res.json(dog);
+  } catch (error) {
+    console.error('Error updating dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/dogs', async (req, res) => {
   try {
     const dogs = await Dog.findAll();
-    const formattedDogs = dogs.map(dog => ({
-      ...dog.dataValues,
-      image: dog.image ? `data:image/png;base64,${dog.image.toString('base64')}` : null
-    }));
-    res.json(formattedDogs);
+    res.json(dogs);
   } catch (error) {
     console.error('Error fetching dogs:', error);
     res.status(500).json({ error: error.message });
@@ -107,9 +167,10 @@ app.delete('/api/dogs/:id', async (req, res) => {
     const dogId = req.params.id;
     const result = await Dog.destroy({
       where: {
-        id: dogId
-      }
+        id: dogId,
+      },
     });
+
     if (result) {
       res.status(204).send();
     } else {
@@ -117,37 +178,6 @@ app.delete('/api/dogs/:id', async (req, res) => {
     }
   } catch (error) {
     console.error('Error deleting dog:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
-  try {
-    const dogId = req.params.id;
-    const { name, age, gender, color, nickname, owner, breed } = req.body;
-    const imageData = req.file ? req.file.buffer : null;
-
-    const dog = await Dog.findByPk(dogId);
-
-    if (dog) {
-      dog.name = name || dog.name;
-      dog.age = age ? parseInt(age, 10) : dog.age;
-      dog.gender = gender || dog.gender;
-      dog.color = color || dog.color;
-      dog.nickname = nickname || dog.nickname;
-      dog.owner = owner || dog.owner;
-      dog.breed = breed || dog.breed;
-      if (imageData) {
-        dog.image = imageData;
-      }
-
-      await dog.save();
-      res.json(dog);
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
-    }
-  } catch (error) {
-    console.error('Error updating dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -163,10 +193,11 @@ app.get('/api/dogs/count', async (req, res) => {
 });
 
 sequelize.sync({ alter: true }).then(() => {
-  const PORT = process.env.PORT || 8080; // Ensure your application listens on the correct port
+  const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+

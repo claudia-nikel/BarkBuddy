@@ -1,12 +1,12 @@
-const { DataTypes } = require('sequelize');
+// models/Dog.js
+const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Dog = sequelize.define('Dog', {
   id: {
-    type: DataTypes.UUID, // Use UUID for unique id
-    defaultValue: DataTypes.UUIDV4, // Automatically generate UUID
+    type: DataTypes.UUID,
+    defaultValue: Sequelize.UUIDV4,
     primaryKey: true,
-    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
@@ -26,7 +26,7 @@ const Dog = sequelize.define('Dog', {
   },
   nickname: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   owner: {
     type: DataTypes.STRING,
@@ -37,9 +37,10 @@ const Dog = sequelize.define('Dog', {
     allowNull: false,
   },
   image: {
-    type: DataTypes.BLOB('long'), // Define as BLOB
+    type: DataTypes.STRING, // Make sure this is STRING type to store the URL
     allowNull: true,
   },
 });
 
 module.exports = Dog;
+

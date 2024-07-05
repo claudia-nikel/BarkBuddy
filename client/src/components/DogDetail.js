@@ -1,3 +1,4 @@
+// DogDetail.js
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -21,8 +22,8 @@ const DogDetail = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [breedDetails, setBreedDetails] = useState(null);
-  const [image, setImage] = useState(null); // Add image state
-  const [imagePreview, setImagePreview] = useState(null); // For image preview
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -35,8 +36,7 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
-      setImage(dog.image); // Set image from dog data
-      setImagePreview(dog.image); // Set preview for existing image
+      setImagePreview(dog.image);
     }
   }, [dog]);
 
@@ -77,7 +77,7 @@ const DogDetail = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-    setImagePreview(URL.createObjectURL(file)); // Set preview for the new image
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -101,7 +101,7 @@ const DogDetail = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image: response.data.image }));
+      dispatch(updateDog(response.data));
       setEditMode(false);
     } catch (error) {
       console.error('Failed to update dog', error);
@@ -205,4 +205,6 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
+
 

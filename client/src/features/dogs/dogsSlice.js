@@ -4,6 +4,7 @@ import axios from 'axios';
 // Save REACT_APP_API_URL in env variable
 const apiUrl = process.env.REACT_APP_API_URL;
 
+// Thunks for async actions
 export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async () => {
   const response = await axios.get(`${apiUrl}/api/dogs`);
   return response.data;
@@ -14,12 +15,8 @@ export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
   return response.data;
 });
 
-export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData }) => {
-  const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+export const updateDog = createAsyncThunk('dogs/updateDog', async (dog) => {
+  const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog);
   return response.data;
 });
 
@@ -47,7 +44,7 @@ const dogsSlice = createSlice({
       })
       .addCase(addDog.fulfilled, (state, action) => {
         state.dogs.push(action.payload);
-        state.count += 1;
+        state.count += 1; // Increment count on add
       })
       .addCase(updateDog.fulfilled, (state, action) => {
         const index = state.dogs.findIndex((dog) => dog.id === action.payload.id);
@@ -55,7 +52,7 @@ const dogsSlice = createSlice({
       })
       .addCase(deleteDog.fulfilled, (state, action) => {
         state.dogs = state.dogs.filter((dog) => dog.id !== action.payload);
-        state.count -= 1;
+        state.count -= 1; // Decrement count on delete
       })
       .addCase(fetchDogCount.fulfilled, (state, action) => {
         state.count = action.payload;
@@ -64,4 +61,5 @@ const dogsSlice = createSlice({
 });
 
 export default dogsSlice.reducer;
+
 
