@@ -23,10 +23,10 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
+  origin: function(origin, callback) {
     // allow requests with no origin - like mobile apps or curl requests
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not ' +
                 'allow access from the specified Origin.';
       return callback(new Error(msg), false);
@@ -42,7 +42,13 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB limit for file size
+    fieldSize: 15 * 1024 * 1024 // 15 MB limit for field size
+  }
+});
 
 // Define a root route
 app.get('/', (req, res) => {
@@ -164,4 +170,3 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
-

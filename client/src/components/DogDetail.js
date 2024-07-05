@@ -80,8 +80,9 @@ const DogDetail = () => {
     setImagePreview(URL.createObjectURL(file)); // Set preview for the new image
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('age', age);
@@ -93,8 +94,18 @@ const DogDetail = () => {
     if (image) {
       formData.append('image', image);
     }
-    dispatch(updateDog({ id, formData }));
-    setEditMode(false);
+
+    try {
+      const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      dispatch(updateDog({ id, name, age, gender, color, nickname, owner, breed, image: response.data.image }));
+      setEditMode(false);
+    } catch (error) {
+      console.error('Failed to update dog', error);
+    }
   };
 
   if (!dog) {
@@ -120,7 +131,7 @@ const DogDetail = () => {
           {imagePreview && <div className="dog-image-container"><img src={imagePreview} alt={name} className="dog-image" /></div>}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="dog-detail-content">
+        <form onSubmit={handleSubmit} className="dog-detail-content" encType="multipart/form-data">
           <div className="dog-detail-text">
             <div className="form-row">
               <label>Name:</label>
@@ -194,3 +205,4 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+
