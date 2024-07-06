@@ -35,7 +35,8 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
-      setImagePreview(dog.image); // Set image preview to the image URL
+      setImagePreview(dog.image);
+      
     }
   }, [dog]);
 
@@ -75,8 +76,13 @@ const DogDetail = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImage(null);
+      setImagePreview(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -205,3 +211,4 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
+

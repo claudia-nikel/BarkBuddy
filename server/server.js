@@ -70,12 +70,12 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype,
-        ACL: 'public-read' // Set the ACL to public-read
+        ContentType: req.file.mimetype
       };
 
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
+      console.log('Image uploaded successfully:', imageUrl); // Debugging log
     }
 
     const age = req.body.age ? parseInt(req.body.age, 10) : null;
@@ -91,7 +91,7 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
     });
     res.json(dog);
   } catch (error) {
-    console.error('Error creating dog:', error);
+    console.error('Error creating dog:', error); // More detailed error logging
     res.status(500).json({ error: error.message });
   }
 });
@@ -148,12 +148,12 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
         Bucket: process.env.AWS_BUCKET_NAME,
         Key: `${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype,
-        ACL: 'public-read' // Set the ACL to public-read
+        ContentType: req.file.mimetype
       };
 
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
+      console.log('Image uploaded successfully:', imageUrl); // Debugging log
     }
 
     const dog = await Dog.findByPk(dogId);
@@ -176,7 +176,7 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
-    console.error('Error updating dog:', error);
+    console.error('Error updating dog:', error); // More detailed error logging
     res.status(500).json({ error: error.message });
   }
 });
