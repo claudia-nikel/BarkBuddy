@@ -1,18 +1,22 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 import { fetchDogs, fetchDogCount, deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
 
 const DogList = () => {
+  const { user } = useAuth0();
   const dogs = useSelector((state) => state.dogs.dogs);
   const count = useSelector((state) => state.dogs.count);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchDogs());
-    dispatch(fetchDogCount());
-  }, [dispatch]);
+    if (user) {
+      dispatch(fetchDogs(user.sub));
+      dispatch(fetchDogCount(user.sub));
+    }
+  }, [dispatch, user]);
 
   const handleDelete = (id) => {
     dispatch(deleteDog(id));
@@ -43,6 +47,10 @@ const DogList = () => {
 };
 
 export default DogList;
+
+
+
+
 
 
 

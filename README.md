@@ -117,7 +117,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Versions
 
-# V1
+# V1 (Current)
 - [x] Add & Delete Dogs
 - [x] Edit Dog details
 - [x] Add & Edit dog image
@@ -126,7 +126,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 # V2
 - [ ] Add login (authorization & authentication)
 - [ ] Minor UI changes
-- [ ] Add more detail to Dog Detail page
+- [ ] Add more details to Dog Detail page
 - [ ] Contact the media
 
 # V3
