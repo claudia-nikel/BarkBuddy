@@ -127,7 +127,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [ ] Add login (authorization & authentication)
 - [ ] Minor UI changes
 - [ ] Add more details to Dog Detail page
-- [ ] Contact the media
 
 # V3
 - [ ] Redo UI 

@@ -24,7 +24,7 @@ const DogList = () => {
 
   return (
     <div className="dog-list">
-      <h1 className="h1-title">Bark Buddy</h1>
+      <h1 className="h1-title">Bark Buddy</h1> 
       <div className="header-actions">
         <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
         <div className="dog-count">Total Dogs: {count}</div>

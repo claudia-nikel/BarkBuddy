@@ -18,7 +18,7 @@ const App = () => {
   return (
     <div className="app-container">
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<ProtectedRoute component={DogList} />} />
         <Route path="/dog-list" element={<ProtectedRoute component={DogList} />} />
         <Route path="/add-dog" element={<ProtectedRoute component={AddDog} />} />
         <Route path="/dog/:id" element={<ProtectedRoute component={DogDetail} />} />
