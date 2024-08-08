@@ -7,12 +7,19 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const Papa = require('papaparse');
 const fs = require('fs');
-const Dog = require('./models/Dog');
 const dotenv = require('dotenv');
+const checkJwt = require('./middleware/auth');
+const Dog = require('./models/Dog');
 
 // Load environment variables from the appropriate .env file
 const env = process.env.NODE_ENV || 'development';
 dotenv.config({ path: path.resolve(__dirname, `.env.${env}`) });
+
+console.log('Environment:', env);
+console.log('Auth0 Domain:', process.env.REACT_APP_AUTH0_DOMAIN);
+console.log('Auth0 Audience:', process.env.REACT_APP_AUTH0_AUDIENCE);
+console.log('AWS Region:', process.env.AWS_REGION);
+console.log('AWS Bucket Name:', process.env.AWS_BUCKET_NAME);
 
 const app = express();
 
@@ -40,7 +47,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin - like mobile apps or curl requests
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not ' +
@@ -50,7 +56,7 @@ app.use(cors({
     return callback(null, true);
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Enable cookies and other credentials
+  credentials: true,
   optionsSuccessStatus: 200
 }));
 
@@ -62,8 +68,19 @@ app.get('/', (req, res) => {
   res.send('Welcome to BarkBuddy!');
 });
 
+// Middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Apply JWT middleware
+app.use(checkJwt);
+
+// Routes
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
+    console.log('POST /api/dogs');
     let imageUrl = null;
     if (req.file) {
       const params = {
@@ -75,7 +92,7 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
 
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl); // Debugging log
+      console.log('Image uploaded successfully:', imageUrl);
     }
 
     const age = req.body.age ? parseInt(req.body.age, 10) : null;
@@ -87,18 +104,20 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
       nickname: req.body.nickname || '',
       owner: req.body.owner || 'Unknown',
       breed: req.body.breed || 'Unknown',
-      image: imageUrl
+      image: imageUrl,
+      user_id: req.user.sub // Ensure user_id is set from authenticated user
     });
     res.json(dog);
   } catch (error) {
-    console.error('Error creating dog:', error); // More detailed error logging
+    console.error('Error creating dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
 app.get('/api/dogs', async (req, res) => {
   try {
-    const dogs = await Dog.findAll();
+    console.log('GET /api/dogs');
+    const dogs = await Dog.findAll({ where: { user_id: req.user.sub } });
     res.json(dogs);
   } catch (error) {
     console.error('Error fetching dogs:', error);
@@ -108,6 +127,7 @@ app.get('/api/dogs', async (req, res) => {
 
 app.get('/api/breeds', async (req, res) => {
   try {
+    console.log('GET /api/breeds');
     const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const results = Papa.parse(fileContent, { header: true });
@@ -120,10 +140,12 @@ app.get('/api/breeds', async (req, res) => {
 
 app.delete('/api/dogs/:id', async (req, res) => {
   try {
+    console.log('DELETE /api/dogs/:id');
     const dogId = req.params.id;
     const result = await Dog.destroy({
       where: {
-        id: dogId
+        id: dogId,
+        user_id: req.user.sub // Ensure user_id matches
       }
     });
     if (result) {
@@ -139,6 +161,7 @@ app.delete('/api/dogs/:id', async (req, res) => {
 
 app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
   try {
+    console.log('PUT /api/dogs/:id');
     const dogId = req.params.id;
     const { name, age, gender, color, nickname, owner, breed } = req.body;
     let imageUrl = null;
@@ -153,10 +176,10 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
 
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl); // Debugging log
+      console.log('Image uploaded successfully:', imageUrl);
     }
 
-    const dog = await Dog.findByPk(dogId);
+    const dog = await Dog.findOne({ where: { id: dogId, user_id: req.user.sub } });
 
     if (dog) {
       dog.name = name || dog.name;
@@ -176,14 +199,15 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
       res.status(404).json({ error: 'Dog not found' });
     }
   } catch (error) {
-    console.error('Error updating dog:', error); // More detailed error logging
+    console.error('Error updating dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
 app.get('/api/dogs/count', async (req, res) => {
   try {
-    const count = await Dog.count();
+    console.log('GET /api/dogs/count');
+    const count = await Dog.count({ where: { user_id: req.user.sub } });
     res.json({ count });
   } catch (error) {
     console.error('Error fetching dog count:', error);
@@ -192,13 +216,10 @@ app.get('/api/dogs/count', async (req, res) => {
 });
 
 sequelize.sync({ alter: true }).then(() => {
-  const PORT = process.env.PORT || 8080; // Ensure your application listens on the correct port
+  const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
-
-
-

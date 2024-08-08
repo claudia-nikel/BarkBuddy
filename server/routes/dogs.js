@@ -1,3 +1,4 @@
+// routes/dogs.js
 const express = require('express');
 const { Dog } = require('../models');
 const router = express.Router();
@@ -10,9 +11,9 @@ const upload = multer({ storage: storage });
 // Get all dogs for the authenticated user
 router.get('/', checkJwt, async (req, res) => {
   try {
-    console.log('Received request to fetch dogs for user:', req.user.sub);
+    console.log('Received request to fetch dogs for user:', req.user.sub); // Add this log
     const dogs = await Dog.findAll({ where: { user_id: req.user.sub } });
-    console.log('Successfully fetched dogs:', dogs);
+    console.log('Successfully fetched dogs:', dogs); // Add this log
     res.json(dogs);
   } catch (error) {
     console.error('Failed to fetch dogs:', error);
@@ -26,11 +27,11 @@ router.post('/', checkJwt, upload.single('image'), async (req, res) => {
   const image = req.file ? req.file.buffer : null;
 
   try {
-    console.log('Received request to add dog for user:', req.user.sub);
+    console.log('Received request to add dog for user:', req.user.sub); // Add this log
     const newDog = await Dog.create({ 
       name, age, gender, color, nickname, owner, breed, image, user_id: req.user.sub 
     });
-    console.log('Successfully added dog:', newDog);
+    console.log('Successfully added dog:', newDog); // Add this log
     res.json(newDog);
   } catch (error) {
     console.error('Failed to add dog:', error);
@@ -45,7 +46,7 @@ router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
   const image = req.file ? req.file.buffer : null;
 
   try {
-    console.log('Received request to update dog with id:', id, 'for user:', req.user.sub);
+    console.log('Received request to update dog with id:', id, 'for user:', req.user.sub); // Add this log
     const dog = await Dog.findOne({ where: { id, user_id: req.user.sub } });
     if (!dog) {
       console.error('Dog not found');
@@ -64,7 +65,7 @@ router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
     }
 
     await dog.save();
-    console.log('Successfully updated dog:', dog);
+    console.log('Successfully updated dog:', dog); // Add this log
     res.json(dog);
   } catch (error) {
     console.error('Failed to update dog:', error);

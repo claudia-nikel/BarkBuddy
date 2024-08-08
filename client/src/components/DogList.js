@@ -16,6 +16,7 @@ const DogList = () => {
       if (user) {
         try {
           const token = await getAccessTokenSilently();
+          console.log('Token:', token); // Add this log
           dispatch(fetchDogs({ userId: user.sub, token }));
           dispatch(fetchDogCount({ userId: user.sub, token }));
         } catch (error) {
@@ -35,6 +36,10 @@ const DogList = () => {
       console.error('Error fetching token:', error);
     }
   };
+
+  useEffect(() => {
+    console.log('Dogs:', dogs); // Add this log
+  }, [dogs]);
 
   return (
     <div className="dog-list">
