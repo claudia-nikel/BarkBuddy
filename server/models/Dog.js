@@ -40,6 +40,11 @@ const Dog = sequelize.define('Dog', {
     type: DataTypes.STRING, // Make sure this is STRING type to store the URL
     allowNull: true,
   },
+  user_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
 });
 
 module.exports = Dog;

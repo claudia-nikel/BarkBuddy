@@ -5,10 +5,10 @@ import axios from 'axios';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // Thunks for async actions
-export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async (userId, { getState }) => {
-  const { getAccessTokenSilently } = getState();
+export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async (_, thunkAPI) => {
+  const getAccessTokenSilently = thunkAPI.extra.getAccessTokenSilently;
   const token = await getAccessTokenSilently();
-  const response = await axios.get(`${apiUrl}/api/dogs?user_id=${userId}`, {
+  const response = await axios.get(`${apiUrl}/api/dogs`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -16,8 +16,8 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async (userId, { get
   return response.data;
 });
 
-export const addDog = createAsyncThunk('dogs/addDog', async (dog, { getState }) => {
-  const { getAccessTokenSilently } = getState();
+export const addDog = createAsyncThunk('dogs/addDog', async (dog, thunkAPI) => {
+  const getAccessTokenSilently = thunkAPI.extra.getAccessTokenSilently;
   const token = await getAccessTokenSilently();
   const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
     headers: {
@@ -27,8 +27,8 @@ export const addDog = createAsyncThunk('dogs/addDog', async (dog, { getState }) 
   return response.data;
 });
 
-export const updateDog = createAsyncThunk('dogs/updateDog', async (dog, { getState }) => {
-  const { getAccessTokenSilently } = getState();
+export const updateDog = createAsyncThunk('dogs/updateDog', async (dog, thunkAPI) => {
+  const getAccessTokenSilently = thunkAPI.extra.getAccessTokenSilently;
   const token = await getAccessTokenSilently();
   const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog, {
     headers: {
@@ -38,8 +38,8 @@ export const updateDog = createAsyncThunk('dogs/updateDog', async (dog, { getSta
   return response.data;
 });
 
-export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id, { getState }) => {
-  const { getAccessTokenSilently } = getState();
+export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id, thunkAPI) => {
+  const getAccessTokenSilently = thunkAPI.extra.getAccessTokenSilently;
   const token = await getAccessTokenSilently();
   await axios.delete(`${apiUrl}/api/dogs/${id}`, {
     headers: {
@@ -49,10 +49,10 @@ export const deleteDog = createAsyncThunk('dogs/deleteDog', async (id, { getStat
   return id;
 });
 
-export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async (userId, { getState }) => {
-  const { getAccessTokenSilently } = getState();
+export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async (_, thunkAPI) => {
+  const getAccessTokenSilently = thunkAPI.extra.getAccessTokenSilently;
   const token = await getAccessTokenSilently();
-  const response = await axios.get(`${apiUrl}/api/dogs/count?user_id=${userId}`, {
+  const response = await axios.get(`${apiUrl}/api/dogs/count`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

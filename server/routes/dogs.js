@@ -73,5 +73,3 @@ router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
 });
 
 module.exports = router;
-
-

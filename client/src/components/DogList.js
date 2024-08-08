@@ -6,25 +6,39 @@ import { fetchDogs, fetchDogCount, deleteDog } from '../features/dogs/dogsSlice'
 import './DogList.css';
 
 const DogList = () => {
-  const { user } = useAuth0();
+  const { user, getAccessTokenSilently } = useAuth0();
   const dogs = useSelector((state) => state.dogs.dogs);
   const count = useSelector((state) => state.dogs.count);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (user) {
-      dispatch(fetchDogs(user.sub));
-      dispatch(fetchDogCount(user.sub));
-    }
-  }, [dispatch, user]);
+    const fetchData = async () => {
+      if (user) {
+        try {
+          const token = await getAccessTokenSilently();
+          dispatch(fetchDogs({ userId: user.sub, token }));
+          dispatch(fetchDogCount({ userId: user.sub, token }));
+        } catch (error) {
+          console.error('Error fetching token:', error);
+        }
+      }
+    };
 
-  const handleDelete = (id) => {
-    dispatch(deleteDog(id));
+    fetchData();
+  }, [dispatch, user, getAccessTokenSilently]);
+
+  const handleDelete = async (id) => {
+    try {
+      const token = await getAccessTokenSilently();
+      dispatch(deleteDog({ id, token }));
+    } catch (error) {
+      console.error('Error fetching token:', error);
+    }
   };
 
   return (
     <div className="dog-list">
-      <h1 className="h1-title">Bark Buddy</h1> 
+      <h1 className="h1-title">Bark Buddy</h1>
       <div className="header-actions">
         <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
         <div className="dog-count">Total Dogs: {count}</div>
@@ -47,6 +61,7 @@ const DogList = () => {
 };
 
 export default DogList;
+
 
 
 

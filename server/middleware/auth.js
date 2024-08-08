@@ -1,6 +1,5 @@
-const jwt = require('express-jwt');
+const { expressjwt: jwt } = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
-const { expressjwt: jwt } = require("express-jwt");
 
 const checkJwt = jwt({
   // Dynamically provide a signing key based on the kid in the header and the signing keys provided by the JWKS endpoint
@@ -18,3 +17,4 @@ const checkJwt = jwt({
 });
 
 module.exports = checkJwt;
+
