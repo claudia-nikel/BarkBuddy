@@ -11,9 +11,14 @@ const checkJwt = jwt({
   audience: process.env.REACT_APP_AUTH0_AUDIENCE,
   issuer: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/`,
   algorithms: ['RS256']
+}).unless({
+  path: ['/api/breeds'] // Exclude paths that do not require authentication
 });
 
-module.exports = checkJwt;
+// Middleware to log the user object
+const logUser = (req, res, next) => {
+  console.log('User:', req.user);
+  next();
+};
 
-
-
+module.exports = { checkJwt, logUser };

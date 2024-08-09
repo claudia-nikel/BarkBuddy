@@ -8,7 +8,7 @@ const AWS = require('aws-sdk');
 const Papa = require('papaparse');
 const fs = require('fs');
 const dotenv = require('dotenv');
-const checkJwt = require('./middleware/auth');
+const { checkJwt, logUser } = require('./middleware/auth');
 const Dog = require('./models/Dog');
 
 // Load environment variables from the appropriate .env file
@@ -74,10 +74,27 @@ app.use((req, res, next) => {
   next();
 });
 
-// Apply JWT middleware
+// Routes that don't require authentication
+app.get('/api/breeds', async (req, res) => {
+  try {
+    console.log('GET /api/breeds');
+    const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    const results = Papa.parse(fileContent, { header: true });
+    res.json(results.data);
+  } catch (error) {
+    console.error('Error fetching breeds:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Apply JWT middleware selectively
 app.use(checkJwt);
 
-// Routes
+// Log user information
+app.use(logUser);
+
+// Routes that require authentication
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     console.log('POST /api/dogs');
@@ -121,19 +138,6 @@ app.get('/api/dogs', async (req, res) => {
     res.json(dogs);
   } catch (error) {
     console.error('Error fetching dogs:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/breeds', async (req, res) => {
-  try {
-    console.log('GET /api/breeds');
-    const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const results = Papa.parse(fileContent, { header: true });
-    res.json(results.data);
-  } catch (error) {
-    console.error('Error fetching breeds:', error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -3,9 +3,11 @@ import { useDispatch } from 'react-redux';
 import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
 import './AddDog.css';
 
 const AddDog = () => {
+  const { getAccessTokenSilently } = useAuth0(); // Get the Auth0 hook
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -34,34 +36,49 @@ const AddDog = () => {
     fetchBreeds();
   }, [apiUrl]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return; // Prevent multiple submissions
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('age', age);
-    formData.append('gender', gender);
-    formData.append('color', color);
-    formData.append('nickname', nickname);
-    formData.append('owner', owner);
-    formData.append('breed', breed);
-    if (image) {
-      formData.append('image', image);
-    }
+    try {
+      const token = await getAccessTokenSilently(); // Get the token
+      console.log('JWT Token:', token); // Log the token to the console
 
-    dispatch(addDog(formData))
-      .unwrap() // handle the returned promise
-      .then(() => {
-        navigate('/');
-      })
-      .catch((error) => {
-        console.error('Failed to add dog', error);
-      })
-      .finally(() => {
-        setIsSubmitting(false); // Re-enable the submit button
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('age', age);
+      formData.append('gender', gender);
+      formData.append('color', color);
+      formData.append('nickname', nickname);
+      formData.append('owner', owner);
+      formData.append('breed', breed);
+      if (image) {
+        formData.append('image', image);
+      }
+
+      await axios.post(`${apiUrl}/api/dogs`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Send the token in the Authorization header
+        }
       });
+
+      // Dispatch the action to add the dog to the Redux store
+      dispatch(addDog(formData))
+        .unwrap() // handle the returned promise
+        .then(() => {
+          navigate('/');
+        })
+        .catch((error) => {
+          console.error('Failed to add dog', error);
+        })
+        .finally(() => {
+          setIsSubmitting(false); // Re-enable the submit button
+        });
+    } catch (error) {
+      console.error('Failed to add dog', error);
+      setIsSubmitting(false);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -120,7 +137,6 @@ const AddDog = () => {
 };
 
 export default AddDog;
-
 
 
 
