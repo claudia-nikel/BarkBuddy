@@ -134,40 +134,29 @@ app.get('/api/dogs/count', async (req, res) => {
   }
 });
 
-app.post('/api/dogs', upload.single('image'), async (req, res) => {
+// DELETE route to delete a dog by ID
+app.delete('/api/dogs/:id', async (req, res) => {
   try {
-    console.log('POST /api/dogs');
-    console.log('User:', req.user);  // Log the user object to verify it's populated
+    console.log('DELETE /api/dogs/:id');
+    const dogId = req.params.id;
 
-    let imageUrl = null;
-    if (req.file) {
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${Date.now()}_${req.file.originalname}`,
-        Body: req.file.buffer,
-        ContentType: req.file.mimetype
-      };
+    // Verify that the dog belongs to the authenticated user
+    const dog = await Dog.findOne({
+      where: {
+        id: dogId,
+        user_id: req.user.sub
+      }
+    });
 
-      const uploadResult = await s3.upload(params).promise();
-      imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl);
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
     }
 
-    const age = req.body.age ? parseInt(req.body.age, 10) : null;
-    const dog = await Dog.create({
-      name: req.body.name,
-      age: age || 0,
-      gender: req.body.gender || 'Unknown',
-      color: req.body.color || 'Unknown',
-      nickname: req.body.nickname || '',
-      owner: req.body.owner || 'Unknown',
-      breed: req.body.breed || 'Unknown',
-      image: imageUrl,
-      user_id: req.user.sub // Ensure user_id is set from authenticated user
-    });
-    res.json(dog);
+    // Delete the dog
+    await dog.destroy();
+    res.status(204).send(); // No Content response to indicate successful deletion
   } catch (error) {
-    console.error('Error creating dog:', error);
+    console.error('Error deleting dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -181,4 +170,5 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+
 

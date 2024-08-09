@@ -30,7 +30,7 @@ const DogList = () => {
     try {
       dispatch(deleteDog({ id, getAccessTokenSilently })); // Updated dispatch
     } catch (error) {
-      console.error('Error fetching token:', error);
+      console.error('Error deleting dog:', error);
     }
   };
 
