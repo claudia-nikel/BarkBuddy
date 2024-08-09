@@ -1,24 +1,29 @@
-const { expressjwt: jwt } = require('express-jwt');
+const jwt = require('jsonwebtoken');
 const jwksRsa = require('jwks-rsa');
 
-const checkJwt = jwt({
-  secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/.well-known/jwks.json`
-  }),
-  audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-  issuer: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/`,
-  algorithms: ['RS256']
-}).unless({
-  path: ['/api/breeds'] // Exclude paths that do not require authentication
-});
+// Simplified JWT middleware for debugging
+const checkJwt = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-// Middleware to log the user object
-const logUser = (req, res, next) => {
-  console.log('User:', req.user);
-  next();
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('No token found in authorization header');
+    return res.status(401).json({ message: 'No token found' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  console.log('Received JWT:', token);
+
+  // Decode the token without verification for testing
+  try {
+    const decodedToken = jwt.decode(token, { complete: true });
+    console.log('Decoded Token:', decodedToken);
+    req.user = decodedToken.payload; // Manually set the user
+    next();
+  } catch (error) {
+    console.error('Error decoding token:', error.message);
+    return res.status(401).json({ message: 'Invalid token' });
+  }
 };
 
-module.exports = { checkJwt, logUser };
+module.exports = checkJwt;
+

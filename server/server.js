@@ -8,7 +8,7 @@ const AWS = require('aws-sdk');
 const Papa = require('papaparse');
 const fs = require('fs');
 const dotenv = require('dotenv');
-const { checkJwt, logUser } = require('./middleware/auth');
+const checkJwt = require('./middleware/auth'); // Ensure correct import
 const Dog = require('./models/Dog');
 
 // Load environment variables from the appropriate .env file
@@ -88,16 +88,26 @@ app.get('/api/breeds', async (req, res) => {
   }
 });
 
-// Apply JWT middleware selectively
-app.use(checkJwt);
+// Logging before and after JWT middleware
+app.use((req, res, next) => {
+  console.log('Before checkJwt middleware');
+  next();
+});
 
-// Log user information
-app.use(logUser);
+app.use(checkJwt); // Apply the JWT middleware here
+
+app.use((req, res, next) => {
+  console.log('After checkJwt middleware');
+  console.log('User:', req.user); // Log the user object to verify it's populated
+  next();
+});
 
 // Routes that require authentication
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     console.log('POST /api/dogs');
+    console.log('User:', req.user);  // Log the user object to verify it's populated
+
     let imageUrl = null;
     if (req.file) {
       const params = {
@@ -131,93 +141,7 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
   }
 });
 
-app.get('/api/dogs', async (req, res) => {
-  try {
-    console.log('GET /api/dogs');
-    const dogs = await Dog.findAll({ where: { user_id: req.user.sub } });
-    res.json(dogs);
-  } catch (error) {
-    console.error('Error fetching dogs:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.delete('/api/dogs/:id', async (req, res) => {
-  try {
-    console.log('DELETE /api/dogs/:id');
-    const dogId = req.params.id;
-    const result = await Dog.destroy({
-      where: {
-        id: dogId,
-        user_id: req.user.sub // Ensure user_id matches
-      }
-    });
-    if (result) {
-      res.status(204).send();
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
-    }
-  } catch (error) {
-    console.error('Error deleting dog:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
-  try {
-    console.log('PUT /api/dogs/:id');
-    const dogId = req.params.id;
-    const { name, age, gender, color, nickname, owner, breed } = req.body;
-    let imageUrl = null;
-
-    if (req.file) {
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${Date.now()}_${req.file.originalname}`,
-        Body: req.file.buffer,
-        ContentType: req.file.mimetype
-      };
-
-      const uploadResult = await s3.upload(params).promise();
-      imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl);
-    }
-
-    const dog = await Dog.findOne({ where: { id: dogId, user_id: req.user.sub } });
-
-    if (dog) {
-      dog.name = name || dog.name;
-      dog.age = age ? parseInt(age, 10) : dog.age;
-      dog.gender = gender || dog.gender;
-      dog.color = color || dog.color;
-      dog.nickname = nickname || dog.nickname;
-      dog.owner = owner || dog.owner;
-      dog.breed = breed || dog.breed;
-      if (imageUrl) {
-        dog.image = imageUrl;
-      }
-
-      await dog.save();
-      res.json(dog);
-    } else {
-      res.status(404).json({ error: 'Dog not found' });
-    }
-  } catch (error) {
-    console.error('Error updating dog:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/dogs/count', async (req, res) => {
-  try {
-    console.log('GET /api/dogs/count');
-    const count = await Dog.count({ where: { user_id: req.user.sub } });
-    res.json({ count });
-  } catch (error) {
-    console.error('Error fetching dog count:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// Other routes and server setup code...
 
 sequelize.sync({ alter: true }).then(() => {
   const PORT = process.env.PORT || 8080;

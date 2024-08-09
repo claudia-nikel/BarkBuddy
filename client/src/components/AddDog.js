@@ -4,10 +4,11 @@ import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
-import './AddDog.css';
 
 const AddDog = () => {
-  const { getAccessTokenSilently } = useAuth0(); // Get the Auth0 hook
+  const { getAccessTokenSilently } = useAuth0(); // Ensure this is correctly initialized
+
+  // State variables
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -18,11 +19,13 @@ const AddDog = () => {
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  // Fetch the list of breeds when the component mounts
   useEffect(() => {
     const fetchBreeds = async () => {
       try {
@@ -33,17 +36,31 @@ const AddDog = () => {
       }
     };
 
-    fetchBreeds();
-  }, [apiUrl]);
+    // Test fetching the token to ensure it works correctly
+    const testGetAccessToken = async () => {
+      try {
+        console.log('About to call getAccessTokenSilently');
+        const token = await getAccessTokenSilently(); // Test the token retrieval
+        console.log('Token fetched successfully:', token);
+      } catch (error) {
+        console.error('Error fetching token:', error.message);
+        console.error('Error details:', error);
+      }
+    };
 
+    fetchBreeds();
+    testGetAccessToken(); // Call the test function to log the token retrieval
+  }, [apiUrl, getAccessTokenSilently]);
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     try {
-      const token = await getAccessTokenSilently(); // Get the token
-      console.log('JWT Token:', token); // Log the token to the console
+      const token = await getAccessTokenSilently(); // Correctly fetch the token
+      console.log('JWT Token:', token);
 
       const formData = new FormData();
       formData.append('name', name);
@@ -57,30 +74,30 @@ const AddDog = () => {
         formData.append('image', image);
       }
 
-      await axios.post(`${apiUrl}/api/dogs`, formData, {
+      const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
         headers: {
-          Authorization: `Bearer ${token}` // Send the token in the Authorization header
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      // Dispatch the action to add the dog to the Redux store
-      dispatch(addDog(formData))
-        .unwrap() // handle the returned promise
+      dispatch(addDog(response.data))
+        .unwrap()
         .then(() => {
           navigate('/');
         })
         .catch((error) => {
-          console.error('Failed to add dog', error);
+          console.error('Failed to add dog in Redux:', error);
         })
         .finally(() => {
-          setIsSubmitting(false); // Re-enable the submit button
+          setIsSubmitting(false);
         });
     } catch (error) {
-      console.error('Failed to add dog', error);
+      console.error('Failed to add dog:', error.message);
       setIsSubmitting(false);
     }
   };
 
+  // Handle image selection
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -137,13 +154,3 @@ const AddDog = () => {
 };
 
 export default AddDog;
-
-
-
-
-
-
-
-
-
-
