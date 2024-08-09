@@ -8,7 +8,7 @@ const AWS = require('aws-sdk');
 const Papa = require('papaparse');
 const fs = require('fs');
 const dotenv = require('dotenv');
-const checkJwt = require('./middleware/auth'); // Ensure correct import
+const checkJwt = require('./middleware/auth');
 const Dog = require('./models/Dog');
 
 // Load environment variables from the appropriate .env file
@@ -103,6 +103,37 @@ app.use((req, res, next) => {
 });
 
 // Routes that require authentication
+app.get('/api/dogs', async (req, res) => {
+  try {
+    console.log('GET /api/dogs');
+    const dogs = await Dog.findAll({
+      where: {
+        user_id: req.user.sub // Fetch only dogs associated with the authenticated user
+      }
+    });
+    res.json(dogs);
+  } catch (error) {
+    console.error('Error fetching dogs:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add the `/api/dogs/count` route to fetch the count of dogs for the authenticated user
+app.get('/api/dogs/count', async (req, res) => {
+  try {
+    console.log('GET /api/dogs/count');
+    const dogCount = await Dog.count({
+      where: {
+        user_id: req.user.sub // Count only dogs associated with the authenticated user
+      }
+    });
+    res.json({ count: dogCount });
+  } catch (error) {
+    console.error('Error fetching dog count:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     console.log('POST /api/dogs');
@@ -141,8 +172,7 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
   }
 });
 
-// Other routes and server setup code...
-
+// Sync the database and start the server
 sequelize.sync({ alter: true }).then(() => {
   const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
@@ -151,3 +181,4 @@ sequelize.sync({ alter: true }).then(() => {
 }).catch(error => {
   console.error('Error syncing database:', error);
 });
+

@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import './DogCount.css';
 
 const DogCount = () => {
-    const dogCount = useSelector(state => state.dogs.length);  // Assuming dogs is the array of dog objects
+    // Fetch the count of dogs from the Redux state
+    const dogCount = useSelector(state => state.dogs.count);  // Assuming "count" is the property holding the dog count
 
     return (
         <div className="dog-count-container">
@@ -13,3 +14,4 @@ const DogCount = () => {
 };
 
 export default DogCount;
+

@@ -15,10 +15,8 @@ const DogList = () => {
     const fetchData = async () => {
       if (user) {
         try {
-          const token = await getAccessTokenSilently();
-          console.log('Token:', token); // Add this log
-          dispatch(fetchDogs({ userId: user.sub, token }));
-          dispatch(fetchDogCount({ userId: user.sub, token }));
+          dispatch(fetchDogs({ getAccessTokenSilently })); // Updated dispatch
+          dispatch(fetchDogCount({ getAccessTokenSilently })); // Updated dispatch
         } catch (error) {
           console.error('Error fetching token:', error);
         }
@@ -30,8 +28,7 @@ const DogList = () => {
 
   const handleDelete = async (id) => {
     try {
-      const token = await getAccessTokenSilently();
-      dispatch(deleteDog({ id, token }));
+      dispatch(deleteDog({ id, getAccessTokenSilently })); // Updated dispatch
     } catch (error) {
       console.error('Error fetching token:', error);
     }
@@ -66,10 +63,6 @@ const DogList = () => {
 };
 
 export default DogList;
-
-
-
-
 
 
 
