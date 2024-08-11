@@ -3,23 +3,15 @@ import axios from 'axios';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
+// Fetch Dogs
 export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTokenSilently }) => {
   try {
-    console.log('Redux Thunk - getAccessTokenSilently:', getAccessTokenSilently);
-
-    if (!getAccessTokenSilently) {
-      throw new Error('getAccessTokenSilently is undefined in fetchDogs');
-    }
-
     const token = await getAccessTokenSilently();
-    console.log('Redux Thunk - JWT Token:', token);
-
     const response = await axios.get(`${apiUrl}/api/dogs`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return response.data;
   } catch (error) {
     console.error('Redux Thunk Error:', error.message);
@@ -27,47 +19,21 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTo
   }
 });
 
-export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
-  try {
-    console.log('Redux Thunk - getAccessTokenSilently:', getAccessTokenSilently);
-
-    if (!getAccessTokenSilently) {
-      throw new Error('getAccessTokenSilently is undefined in addDog');
-    }
-
-    const token = await getAccessTokenSilently();
-    console.log('Redux Thunk - JWT Token:', token);
-
-    const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Redux Thunk Error:', error.message);
-    throw error;
-  }
+// Add Dog - This action now only updates the Redux state with the dog provided as an argument
+export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
+  // Directly return the dog object, assuming it has been added to the backend via another function
+  return dog;
 });
 
+// Update Dog
 export const updateDog = createAsyncThunk('dogs/updateDog', async ({ dog, getAccessTokenSilently }) => {
   try {
-    console.log('Redux Thunk - getAccessTokenSilently:', getAccessTokenSilently);
-
-    if (!getAccessTokenSilently) {
-      throw new Error('getAccessTokenSilently is undefined in updateDog');
-    }
-
     const token = await getAccessTokenSilently();
-    console.log('Redux Thunk - JWT Token:', token);
-
     const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return response.data;
   } catch (error) {
     console.error('Redux Thunk Error:', error.message);
@@ -75,23 +41,15 @@ export const updateDog = createAsyncThunk('dogs/updateDog', async ({ dog, getAcc
   }
 });
 
+// Delete Dog
 export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, getAccessTokenSilently }) => {
   try {
-    console.log('Redux Thunk - getAccessTokenSilently:', getAccessTokenSilently);
-
-    if (!getAccessTokenSilently) {
-      throw new Error('getAccessTokenSilently is undefined in deleteDog');
-    }
-
     const token = await getAccessTokenSilently();
-    console.log('Redux Thunk - JWT Token:', token);
-
     await axios.delete(`${apiUrl}/api/dogs/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return id;
   } catch (error) {
     console.error('Redux Thunk Error:', error.message);
@@ -99,23 +57,15 @@ export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, getAcce
   }
 });
 
+// Fetch Dog Count
 export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async ({ getAccessTokenSilently }) => {
   try {
-    console.log('Redux Thunk - getAccessTokenSilently:', getAccessTokenSilently);
-
-    if (!getAccessTokenSilently) {
-      throw new Error('getAccessTokenSilently is undefined in fetchDogCount');
-    }
-
     const token = await getAccessTokenSilently();
-    console.log('Redux Thunk - JWT Token:', token);
-
     const response = await axios.get(`${apiUrl}/api/dogs/count`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     return response.data.count;
   } catch (error) {
     console.error('Redux Thunk Error:', error.message);
@@ -123,6 +73,7 @@ export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async ({ get
   }
 });
 
+// Create the dogs slice
 const dogsSlice = createSlice({
   name: 'dogs',
   initialState: {
