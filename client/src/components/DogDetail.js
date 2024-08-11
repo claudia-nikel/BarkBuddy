@@ -4,12 +4,14 @@ import { useParams } from 'react-router-dom';
 import { updateDog } from '../features/dogs/dogsSlice';
 import axios from 'axios';
 import Papa from 'papaparse';
+import { useAuth0 } from '@auth0/auth0-react';
 import './DogDetail.css';
 
 const DogDetail = () => {
   const { id } = useParams();
   const dog = useSelector(state => state.dogs.dogs.find(dog => dog.id === id));
   const dispatch = useDispatch();
+  const { getAccessTokenSilently } = useAuth0(); // Ensure this is correctly imported
 
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState('');
@@ -36,7 +38,6 @@ const DogDetail = () => {
       setOwner(dog.owner);
       setBreed(dog.breed);
       setImagePreview(dog.image);
-      
     }
   }, [dog]);
 
@@ -101,14 +102,10 @@ const DogDetail = () => {
     }
 
     try {
-      const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      dispatch(updateDog(response.data));
+      // Pass the getAccessTokenSilently function to the updateDog action
+      dispatch(updateDog({ id, formData, getAccessTokenSilently }));
       setEditMode(false);
-      setImagePreview(response.data.image); // Update image preview with the new URL
+      setImagePreview(image ? URL.createObjectURL(image) : dog.image); // Update image preview with the new URL if available
     } catch (error) {
       console.error('Failed to update dog', error);
     }
@@ -211,4 +208,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-

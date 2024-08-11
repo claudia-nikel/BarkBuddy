@@ -19,19 +19,30 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTo
   }
 });
 
-// Add Dog - This action now only updates the Redux state with the dog provided as an argument
-export const addDog = createAsyncThunk('dogs/addDog', async (dog) => {
-  // Directly return the dog object, assuming it has been added to the backend via another function
-  return dog;
+// Add Dog
+export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
+  try {
+    const token = await getAccessTokenSilently();
+    const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Redux Thunk Error:', error.message);
+    throw error;
+  }
 });
 
 // Update Dog
-export const updateDog = createAsyncThunk('dogs/updateDog', async ({ dog, getAccessTokenSilently }) => {
+export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData, getAccessTokenSilently }) => {
   try {
     const token = await getAccessTokenSilently();
-    const response = await axios.put(`${apiUrl}/api/dogs/${dog.id}`, dog, {
+    const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
@@ -105,10 +116,3 @@ const dogsSlice = createSlice({
 });
 
 export default dogsSlice.reducer;
-
-
-
-
-
-
-

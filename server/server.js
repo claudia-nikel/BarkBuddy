@@ -200,6 +200,56 @@ app.delete('/api/dogs/:id', async (req, res) => {
   }
 });
 
+// PUT route to update a dog by ID
+app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    console.log('PUT /api/dogs/:id');
+    const dogId = req.params.id;
+
+    // Verify that the dog belongs to the authenticated user
+    const dog = await Dog.findOne({
+      where: {
+        id: dogId,
+        user_id: req.user.sub
+      }
+    });
+
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
+
+    let imageUrl = dog.image; // Keep the current image URL unless a new one is provided
+    if (req.file) {
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${Date.now()}_${req.file.originalname}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype
+      };
+
+      const uploadResult = await s3.upload(params).promise();
+      imageUrl = uploadResult.Location;
+      console.log('Image uploaded successfully:', imageUrl);
+    }
+
+    // Update dog attributes
+    dog.name = req.body.name || dog.name;
+    dog.age = req.body.age ? parseInt(req.body.age, 10) : dog.age;
+    dog.gender = req.body.gender || dog.gender;
+    dog.color = req.body.color || dog.color;
+    dog.nickname = req.body.nickname || dog.nickname;
+    dog.owner = req.body.owner || dog.owner;
+    dog.breed = req.body.breed || dog.breed;
+    dog.image = imageUrl;
+
+    await dog.save();
+    res.json(dog);
+  } catch (error) {
+    console.error('Error updating dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Sync the database and start the server
 sequelize.sync({ alter: true }).then(() => {
   const PORT = process.env.PORT || 8080;
