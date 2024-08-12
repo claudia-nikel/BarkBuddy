@@ -1,0 +1,80 @@
+/* General landing page styles */
+.landing-page {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .auth-buttons {
+    margin-top: 20px;
+  }
+  
+  .login-button,
+  .signup-button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #e63900; /* Red */
+    color: white;
+    text-decoration: none;
+  }
+  
+  .login-button:hover,
+  .signup-button:hover {
+    background-color: #cc3300; /* Darker red */
+  }
+  
+  .preview {
+    margin-top: 40px;
+  }
+  
+  .preview-images {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .preview-image {
+    width: 200px;
+    cursor: pointer;
+    border: 2px solid #e63900;
+    border-radius: 5px;
+  }
+  
+  .preview-image:hover {
+    opacity: 0.8;
+  }
+  
+  /* Modal styles */
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  

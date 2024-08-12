@@ -1,90 +1,97 @@
 
-  .edit-button, .submit-button {
-    background-color: #e63900;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .submit-button {
-    background-color: #008CBA;
-  }
-  
-  .form-row {
-    margin-bottom: 10px;
-  }
-  
-  .breed-link {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  .breed-details {
-    margin-top: 20px;
-  }
-  
-  .breed-details h2 {
-    margin-bottom: 10px;
-  }
-  
-  .breed-details table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .breed-details th, .breed-details td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  .breed-details th {
-    background-color: #f2f2f2;
-    text-align: left;
-  }
+.edit-button, .submit-button {
+  background-color: #e63900;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
-  .back-button {
-    background-color: #ccc;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    font-size: 16px;
-    border-radius: 4px;
-  }
-  
-  .back-button:hover {
-    background-color: #bbb;
-  }
+.submit-button {
+  background-color: #008CBA;
+}
 
-  .dog-image-container {
-    flex-shrink: 0;
-    margin-left: 20px;
-  }
-  
-  .dog-image {
-    width: 150px;
-    height: auto;
-    border: 2px solid #ff4500;
-    border-radius: 8px;
-  }
+.form-row {
+  margin-bottom: 10px;
+}
 
-  .dog-detail-container {
-    padding: 20px;
-  }
-  
-  .dog-detail-content {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .dog-detail-text {
-    flex: 1;
-  }
+.breed-link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.breed-details {
+  margin-top: 20px;
+}
+
+.breed-details h2 {
+  margin-bottom: 10px;
+}
+
+.breed-details table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.breed-details th, .breed-details td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.breed-details th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.back-button {
+  background-color: #ccc;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.back-button:hover {
+  background-color: #bbb;
+}
+
+.dog-image-container {
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+
+.dog-image {
+  width: 150px;
+  height: auto;
+  border: 2px solid #ff4500;
+  border-radius: 8px;
+}
+
+.dog-detail-container {
+  padding: 20px;
+}
+
+.dog-detail-content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.dog-detail-text {
+  flex: 1;
+  text-align: left;
+}
+
+.dog-image-container {
+  margin-left: 40px;
+  flex-shrink: 0;
+}

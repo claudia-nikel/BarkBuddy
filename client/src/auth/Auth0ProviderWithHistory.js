@@ -6,11 +6,11 @@ const Auth0ProviderWithHistory = ({ children }) => {
   const navigate = useNavigate();
   const domain = process.env.REACT_APP_AUTH0_DOMAIN;
   const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
-  const redirectUri = process.env.REACT_APP_AUTH0_REDIRECT_URI;
+  const redirectUri = process.env.REACT_APP_AUTH0_REDIRECT_URI || window.location.origin;
   const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
 
   const onRedirectCallback = (appState) => {
-    navigate(appState?.returnTo || window.location.pathname);
+    navigate(appState?.returnTo || '/dogs'); // Redirect to the /dogs route after login
   };
 
   return (
@@ -30,8 +30,6 @@ const Auth0ProviderWithHistory = ({ children }) => {
 };
 
 export default Auth0ProviderWithHistory;
-
-
 
 
 

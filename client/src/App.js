@@ -1,34 +1,27 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { Route, Routes } from 'react-router-dom';
 import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import DogDetail from './components/DogDetail';
-import UserDogPage from './components/UserDogPage';
-import LoginPage from './pages/LoginPage';
-import './App.css'; // Assuming you have a global CSS file.
+import LandingPage from './pages/LandingPage';
+import './App.css';
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const { isAuthenticated } = useAuth0();
-
-  return isAuthenticated ? <Component {...rest} /> : <LoginPage />;
-};
-
-const App = () => {
+function App() {
   return (
-    <div className="app-container">
+    <div className="App">
       <Routes>
-        <Route path="/" element={<ProtectedRoute component={DogList} />} />
-        <Route path="/dog-list" element={<ProtectedRoute component={DogList} />} />
-        <Route path="/add-dog" element={<ProtectedRoute component={AddDog} />} />
-        <Route path="/dog/:id" element={<ProtectedRoute component={DogDetail} />} />
-        <Route path="/user-dog/:id" element={<ProtectedRoute component={UserDogPage} />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dogs" element={<DogList />} />
+        <Route path="/add-dog" element={<AddDog />} />
+        <Route path="/dog/:id" element={<DogDetail />} />
       </Routes>
     </div>
   );
-};
+}
 
 export default App;
+
+
 
 
 

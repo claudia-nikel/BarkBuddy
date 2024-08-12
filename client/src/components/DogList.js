@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Replaced useHistory with useNavigate
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchDogs, fetchDogCount, deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
@@ -10,32 +10,35 @@ const DogList = () => {
   const dogs = useSelector((state) => state.dogs.dogs);
   const count = useSelector((state) => state.dogs.count);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Replaced useHistory with useNavigate
 
   useEffect(() => {
     const fetchData = async () => {
       if (user) {
         try {
-          dispatch(fetchDogs({ getAccessTokenSilently })); // Updated dispatch
-          dispatch(fetchDogCount({ getAccessTokenSilently })); // Updated dispatch
+          dispatch(fetchDogs({ getAccessTokenSilently })); // Fetch dogs for the authenticated user
+          dispatch(fetchDogCount({ getAccessTokenSilently })); // Fetch the dog count for the authenticated user
         } catch (error) {
           console.error('Error fetching token:', error);
         }
+      } else {
+        navigate('/'); // Redirect to the landing page if not authenticated
       }
     };
 
     fetchData();
-  }, [dispatch, user, getAccessTokenSilently]);
+  }, [dispatch, user, getAccessTokenSilently, navigate]); // Added navigate to dependency array
 
   const handleDelete = async (id) => {
     try {
-      dispatch(deleteDog({ id, getAccessTokenSilently })); // Updated dispatch
+      dispatch(deleteDog({ id, getAccessTokenSilently })); // Delete the selected dog
     } catch (error) {
       console.error('Error deleting dog:', error);
     }
   };
 
   useEffect(() => {
-    console.log('Dogs:', dogs); // Add this log
+    console.log('Dogs:', dogs); // Log the dogs for debugging
   }, [dogs]);
 
   return (
@@ -63,6 +66,7 @@ const DogList = () => {
 };
 
 export default DogList;
+
 
 
 
