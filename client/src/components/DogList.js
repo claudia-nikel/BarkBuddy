@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import { FaTrash } from 'react-icons/fa'; // Import the garbage can icon
 import { fetchDogs, fetchDogCount, deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
 
 const DogList = () => {
-  const { user, getAccessTokenSilently, logout } = useAuth0(); // Added `logout` here
+  const { user, getAccessTokenSilently, logout } = useAuth0();
   const dogs = useSelector((state) => state.dogs.dogs);
   const count = useSelector((state) => state.dogs.count);
   const dispatch = useDispatch();
@@ -36,7 +37,10 @@ const DogList = () => {
 
   return (
     <div className="dog-list">
-      <h1 className="h1-title">Bark Buddy</h1>
+      <div className="title-container">
+        <h1 className="h1-title">Bark Buddy</h1>
+        <img src={process.env.PUBLIC_URL + '/images/dog-head.png'} alt="Dog Head" className="dog-head-image" />
+      </div>
       <div className="header-actions">
         <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
         <div className="dog-count">Total Dogs: {count}</div>
@@ -61,7 +65,9 @@ const DogList = () => {
                   <span className="dog-breed">{dog.breed}</span>
                 </div>
               </Link>
-              <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
+              <button onClick={() => handleDelete(dog.id)} className="delete-button">
+                <FaTrash />
+              </button>
             </li>
           ))
         ) : (

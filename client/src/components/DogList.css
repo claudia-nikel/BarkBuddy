@@ -1,23 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
 /* General Styling for Dog List Page */
 .dog-list {
-  background-image: url('../../public/images/paw-pattern.png'); /* Background image */
-  background-repeat: repeat-y;
-  background-position: bottom right;
   padding: 20px;
+  background-color: #f9f9f9;
+}
+
+/* Title Container Styling */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the content horizontally */
 }
 
 /* Title Styling */
 .h1-title {
-  border: 2px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  font-size: 50px; /* Larger font size */
-  font-weight: bold; /* Bold font weight */
+  margin-right: 20px; /* Add some space between the title and the image */
+  font-size: 50px;
+  font-weight: bold;
   color: #e63900;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dog Head Image Styling */
+.dog-head-image {
+  width: 100px; /* Make the image larger */
+  height: auto;
 }
 
 /* Header Actions */
@@ -30,20 +42,20 @@
 
 /* Add Dog Button Styling */
 .add-dog-link {
-  background-color: #ff4500; /* Vibrant orange color */
-  color: white; /* White text for contrast */
-  padding: 10px 20px; /* Padding for a larger button */
+  background-color: #ff4500;
+  color: white;
+  padding: 10px 20px;
   text-align: center;
-  border-radius: 5px; /* Rounded corners */
-  text-decoration: none; /* Remove underline */
-  font-weight: bold; /* Bold font for better visibility */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .add-dog-link:hover {
-  background-color: #e63900; /* Darker shade on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover */
+  background-color: #e63900;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Dog Count Styling */
@@ -95,35 +107,28 @@ ul {
 }
 
 .dog-name {
-  margin-right: auto; /* Pushes the breed text to the right */
+  margin-right: auto;
   font-weight: bold;
-  text-decoration: none;
   color: #000;
 }
 
 .dog-breed {
-  margin-left: auto; /* Pushes the breed text to the right */
-  margin-right: 10px; /* Adds some space between breed text and delete button */
+  margin-left: auto;
+  margin-right: 10px;
   color: grey;
 }
 
 /* Delete Button Styling */
 .delete-button {
-  background-color: #ff4500; /* Vibrant color for visibility */
-  color: white; /* High contrast text color */
-  padding: 10px 20px; /* Generous padding to increase size */
-  font-size: 16px; /* Larger font size for readability */
-  font-weight: bold; /* Bold text for emphasis */
-  border: none; /* No border for a modern look */
-  border-radius: 5px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  cursor: pointer; /* Cursor indicates clickability */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions for interactions */
+  background-color: transparent;
+  color: #ff4500;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
 }
 
 .delete-button:hover {
-  background-color: #e63900; /* Darker shade on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover for 3D effect */
+  color: #e63900;
 }
 
 /* Dropdown Menu Styling */
