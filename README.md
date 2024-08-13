@@ -123,12 +123,15 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [x] Add & Edit dog image
 - [x] Display total count of dogs
 
-# V2
-- [ ] Add login (authorization & authentication)
-- [ ] Minor UI changes
+# V2 (Current)
+- [X] Add login (authorization & authentication)
+- [X] Minor UI changes
+- [X] Add Landing Page
+
+# V4
+- [ ] Redo UI 
 - [ ] Add more details to Dog Detail page
 
-# V3
-- [ ] Redo UI 
+# V5
 - [ ] Add page for your own dog with unique id
 - [ ] Add ability to add other dogs by their unique id

@@ -22,7 +22,7 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTo
 // Add Dog
 export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
   try {
-    const token = await getAccessTokenSilently();
+    const token = await getAccessTokenSilently();  // Ensure this is a function
     const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -4,9 +4,10 @@ import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import './AddDog.css';
 
 const AddDog = () => {
-  const { getAccessTokenSilently } = useAuth0(); 
+  const { getAccessTokenSilently } = useAuth0();
 
   // State variables
   const [name, setName] = useState('');
@@ -64,19 +65,22 @@ const AddDog = () => {
 
       console.log('Form data prepared:', formData);
 
-      const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Pass formData and getAccessTokenSilently to addDog
+      const dogData = {
+        name,
+        age,
+        gender,
+        color,
+        nickname,
+        owner,
+        breed,
+        image: image ? URL.createObjectURL(image) : null,
+      };
 
-      console.log('API response:', response.data);
-
-      // Dispatch action to update Redux store with the newly added dog
-      dispatch(addDog(response.data));
+      dispatch(addDog({ dog: dogData, getAccessTokenSilently }));
 
       console.log('Dog added successfully to Redux');
-      navigate('/'); // Redirect to the homepage after adding
+      navigate('/dogs');
     } catch (error) {
       console.error('Failed to add dog:', error);
     } finally {
@@ -115,7 +119,7 @@ const AddDog = () => {
         </div>
         <div className="form-row">
           <label>Gender:</label>
-          <select value={gender} onChange={(e) => setGender(e.target.value)} required>
+          <select value={gender} onChange={(e) => setGender(e.target.value)} className="short-select" required>
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -151,7 +155,7 @@ const AddDog = () => {
         </div>
         <div className="form-row">
           <label>Breed:</label>
-          <select value={breed} onChange={(e) => setBreed(e.target.value)} required>
+          <select value={breed} onChange={(e) => setBreed(e.target.value)} className="short-select" required>
             <option value="">Select Breed</option>
             {breeds.map((breed, index) => (
               <option key={index} value={breed.Name}>
@@ -164,12 +168,15 @@ const AddDog = () => {
           <label>Image:</label>
           <input type="file" onChange={handleImageChange} />
         </div>
-        <button type="submit" className="submit-button" disabled={isSubmitting}>
-          Submit
-        </button>
+        <div className="submit-button-container">
+          <button type="submit" className="submit-button" disabled={isSubmitting}>
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
 export default AddDog;
+
