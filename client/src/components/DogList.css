@@ -1,117 +1,182 @@
-.h1-title {
-    border: 2px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    background-color: #fff;
-    background-size: cover;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    font-size: 50px; /* Larger font size */
-    font-weight: bold; /* Bold font weight */
-    color: #e63900;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0);
+/* General Styling for Dog List Page */
+.dog-list {
+  background-image: url('../../public/images/paw-pattern.png'); /* Background image */
+  background-repeat: repeat-y;
+  background-position: bottom right;
+  padding: 20px;
 }
 
-.dog-list {
-    background-image: url('../../public/images/paw-pattern.png'); /* Assuming the root is the public directory */
-    background-repeat: repeat-y;
-    background-position: bottom right;
-    padding: 20px;
+/* Title Styling */
+.h1-title {
+  border: 2px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 50px; /* Larger font size */
+  font-weight: bold; /* Bold font weight */
+  color: #e63900;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0);
 }
-.dog-list {
-    padding: 20px;
-  }
-  
-  .h1-title {
-    font-size: 2em;
-  }
-  
-  .header-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .add-dog-link {
-    background-color: #ff4500; /* Vibrant orange color */
-    color: white; /* White text for contrast */
-    padding: 10px 20px; /* Padding for a larger button */
-    text-align: center;
-    border-radius: 5px; /* Rounded corners */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Bold font for better visibility */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
-  }
-  
-  .add-dog-link:hover {
-    background-color: #e63900; /* Darker shade on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover */
-  }
-  
-  .dog-count {
-    background-color: white;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-weight: bold;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .dog-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dog-item:hover {
-    border-color: #ffcc00;
-  }
-  
-  .dog-item-content {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .dog-name {
-    margin-right: auto; /* Pushes the breed text to the right */
-    font-weight: bold;
-    text-decoration: none;
-    color: #000;
-  }
-  
-  .dog-breed {
-    margin-left: auto; /* Pushes the breed text to the right */
-    margin-right: 10px; /* Adds some space between breed text and delete button */
-    color: grey;
-  }
-  
-  .delete-button {
-    background-color: #ff4500; /* Vibrant color for visibility */
-    color: white; /* High contrast text color */
-    padding: 10px 20px; /* Generous padding to increase size */
-    font-size: 16px; /* Larger font size for readability */
-    font-weight: bold; /* Bold text for emphasis */
-    border: none; /* No border for a modern look */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    cursor: pointer; /* Cursor indicates clickability */
-    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions for interactions */
-  }
-  
-  .delete-button:hover {
-    background-color: #e63900; /* Darker shade on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover for 3D effect */
-  }
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Add Dog Button Styling */
+.add-dog-link {
+  background-color: #ff4500; /* Vibrant orange color */
+  color: white; /* White text for contrast */
+  padding: 10px 20px; /* Padding for a larger button */
+  text-align: center;
+  border-radius: 5px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Bold font for better visibility */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+.add-dog-link:hover {
+  background-color: #e63900; /* Darker shade on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover */
+}
+
+/* Dog Count Styling */
+.dog-count {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+/* List Styling */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Individual Dog Item Styling */
+.dog-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dog-item:hover {
+  border-color: #ffcc00;
+}
+
+/* Link Styling */
+.dog-link {
+  text-decoration: none;
+  color: inherit;
+  flex-grow: 1;
+  display: flex;
+}
+
+/* Dog Item Content Styling */
+.dog-item-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.dog-name {
+  margin-right: auto; /* Pushes the breed text to the right */
+  font-weight: bold;
+  text-decoration: none;
+  color: #000;
+}
+
+.dog-breed {
+  margin-left: auto; /* Pushes the breed text to the right */
+  margin-right: 10px; /* Adds some space between breed text and delete button */
+  color: grey;
+}
+
+/* Delete Button Styling */
+.delete-button {
+  background-color: #ff4500; /* Vibrant color for visibility */
+  color: white; /* High contrast text color */
+  padding: 10px 20px; /* Generous padding to increase size */
+  font-size: 16px; /* Larger font size for readability */
+  font-weight: bold; /* Bold text for emphasis */
+  border: none; /* No border for a modern look */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  cursor: pointer; /* Cursor indicates clickability */
+  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions for interactions */
+}
+
+.delete-button:hover {
+  background-color: #e63900; /* Darker shade on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover for 3D effect */
+}
+
+/* Dropdown Menu Styling */
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: #e63900;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content button {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border: none;
+  background-color: white;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdown-content button:hover {
+  background-color: #e63900;
+  color: white;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #d62800;
+}

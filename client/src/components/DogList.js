@@ -1,45 +1,38 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom'; // Replaced useHistory with useNavigate
+import { Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchDogs, fetchDogCount, deleteDog } from '../features/dogs/dogsSlice';
 import './DogList.css';
 
 const DogList = () => {
-  const { user, getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently, logout } = useAuth0(); // Added `logout` here
   const dogs = useSelector((state) => state.dogs.dogs);
   const count = useSelector((state) => state.dogs.count);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Replaced useHistory with useNavigate
 
   useEffect(() => {
     const fetchData = async () => {
       if (user) {
         try {
-          dispatch(fetchDogs({ getAccessTokenSilently })); // Fetch dogs for the authenticated user
-          dispatch(fetchDogCount({ getAccessTokenSilently })); // Fetch the dog count for the authenticated user
+          dispatch(fetchDogs({ getAccessTokenSilently }));
+          dispatch(fetchDogCount({ getAccessTokenSilently }));
         } catch (error) {
           console.error('Error fetching token:', error);
         }
-      } else {
-        navigate('/'); // Redirect to the landing page if not authenticated
       }
     };
 
     fetchData();
-  }, [dispatch, user, getAccessTokenSilently, navigate]); // Added navigate to dependency array
+  }, [dispatch, user, getAccessTokenSilently]);
 
   const handleDelete = async (id) => {
     try {
-      dispatch(deleteDog({ id, getAccessTokenSilently })); // Delete the selected dog
+      dispatch(deleteDog({ id, getAccessTokenSilently }));
     } catch (error) {
       console.error('Error deleting dog:', error);
     }
   };
-
-  useEffect(() => {
-    console.log('Dogs:', dogs); // Log the dogs for debugging
-  }, [dogs]);
 
   return (
     <div className="dog-list">
@@ -47,13 +40,27 @@ const DogList = () => {
       <div className="header-actions">
         <Link to="/add-dog" className="add-dog-link">Add Buddy</Link>
         <div className="dog-count">Total Dogs: {count}</div>
+        <div className="header-right">
+          <div className="dropdown">
+            <button className="dropbtn">{user?.name || 'User'}</button>
+            <div className="dropdown-content">
+              <button onClick={() => logout({ returnTo: window.location.origin })}>
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <ul>
         {dogs && dogs.length > 0 ? (
           dogs.map((dog) => (
             <li key={dog.id} className="dog-item">
-              <Link to={`/dog/${dog.id}`}>{dog.name}</Link>
-              <span className="dog-breed">{dog.breed}</span>
+              <Link to={`/dog/${dog.id}`} className="dog-link">
+                <div className="dog-item-content">
+                  <span className="dog-name">{dog.name}</span>
+                  <span className="dog-breed">{dog.breed}</span>
+                </div>
+              </Link>
               <button onClick={() => handleDelete(dog.id)} className="delete-button">Delete</button>
             </li>
           ))
@@ -66,14 +73,3 @@ const DogList = () => {
 };
 
 export default DogList;
-
-
-
-
-
-
-
-
-
-
-
