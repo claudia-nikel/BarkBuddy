@@ -118,20 +118,25 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Versions
 
 # V1
+Release Date: July 6, 2024
 - [x] Add & Delete Dogs
 - [x] Edit Dog details
 - [x] Add & Edit dog image
 - [x] Display total count of dogs
 
-# V2 (Current)
+# V2
+Release Date: August 11, 2024
 - [X] Add login (authorization & authentication)
 - [X] Minor UI changes
 - [X] Add Landing Page
 
-# V4
-- [ ] Redo UI 
-- [ ] Add more details to Dog Detail page
+# V3 (Current)
+Release Date: August 13, 2024
+- [X] Redo UI 
 
-# V5
+# V4
 - [ ] Add page for your own dog with unique id
 - [ ] Add ability to add other dogs by their unique id
+
+# V5
+- [ ] Add more details to Dog Detail page
