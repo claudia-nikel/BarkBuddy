@@ -9,9 +9,9 @@ import './DogDetail.css';
 
 const DogDetail = () => {
   const { id } = useParams();
-  const dog = useSelector(state => state.dogs.dogs.find(dog => dog.id === id));
+  const dog = useSelector((state) => state.dogs.dogs.find((dog) => dog.id === id));
   const dispatch = useDispatch();
-  const { getAccessTokenSilently } = useAuth0(); // Ensure this is correctly imported
+  const { getAccessTokenSilently } = useAuth0(); 
 
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState('');
@@ -63,7 +63,7 @@ const DogDetail = () => {
         const decoder = new TextDecoder('utf-8');
         const csv = decoder.decode(result.value);
         const results = Papa.parse(csv, { header: true });
-        const breedDetail = results.data.find(b => b.Name === breed);
+        const breedDetail = results.data.find((b) => b.Name === breed);
         setBreedDetails(breedDetail);
       } catch (error) {
         console.error('Failed to fetch breed details', error);
@@ -102,10 +102,9 @@ const DogDetail = () => {
     }
 
     try {
-      // Pass the getAccessTokenSilently function to the updateDog action
       dispatch(updateDog({ id, formData, getAccessTokenSilently }));
       setEditMode(false);
-      setImagePreview(image ? URL.createObjectURL(image) : dog.image); // Update image preview with the new URL if available
+      setImagePreview(image ? URL.createObjectURL(image) : dog.image); 
     } catch (error) {
       console.error('Failed to update dog', error);
     }
@@ -118,11 +117,13 @@ const DogDetail = () => {
   return (
     <div className="dog-detail-container">
       <button onClick={() => window.history.back()} className="back-button">Back</button>
-      <h1>Dog Details</h1>
+      <div className="title-section">
+        <h1 className="dog-title">{name}</h1>
+        <h2 className="dog-subtitle">Dog Details</h2>
+      </div>
       {!editMode ? (
         <div className="dog-detail-content">
           <div className="dog-detail-text">
-            <p><strong>Name:</strong> {name}</p>
             <p><strong>Age:</strong> {age}</p>
             <p><strong>Gender:</strong> {gender}</p>
             <p><strong>Color:</strong> {color}</p>
@@ -131,7 +132,11 @@ const DogDetail = () => {
             <p><strong>Breed:</strong> {breed}</p>
             <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
           </div>
-          {imagePreview && <div className="dog-image-container"><img src={imagePreview} alt={name} className="dog-image" /></div>}
+          {imagePreview && (
+            <div className="dog-image-container">
+              <img src={imagePreview} alt={name} className="dog-image" />
+            </div>
+          )}
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="dog-detail-content" encType="multipart/form-data">
@@ -178,7 +183,11 @@ const DogDetail = () => {
             </div>
             <button type="submit" className="submit-button">Save Changes</button>
           </div>
-          {imagePreview && <div className="dog-image-container"><img src={imagePreview} alt={name} className="dog-image" /></div>}
+          {imagePreview && (
+            <div className="dog-image-container">
+              <img src={imagePreview} alt={name} className="dog-image" />
+            </div>
+          )}
         </form>
       )}
 

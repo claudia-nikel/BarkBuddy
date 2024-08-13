@@ -5,6 +5,7 @@ import './LandingPage.css';
 // Import images
 const dogListPreview = process.env.PUBLIC_URL + '/images/dog-list-preview.png';
 const dogDetailPreview = process.env.PUBLIC_URL + '/images/dog-detail-preview.png';
+const dogHeadImage = process.env.PUBLIC_URL + '/images/dog-head.png'; // Added the dog-head image
 
 const LandingPage = () => {
   const { loginWithRedirect } = useAuth0();
@@ -23,13 +24,16 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      <h1>Welcome to Bark Buddy!</h1>
+      <div className="title-container">
+        <h1>Welcome to BarkBuddy!</h1>
+        <img src={dogHeadImage} alt="Dog Head Logo" className="dog-head-image" />
+      </div>
       <p>Your personal dog dictionary app.</p>
       
       <div className="app-description">
         <p>BarkBuddy is your go-to app for keeping track of all the wonderful dogs you meet at the dog park. Whether you're a dog owner or just a dog lover, BarkBuddy allows you to create a personalized dictionary of dogs with detailed information and photos.</p>
         <p>With BarkBuddy, you can:</p>
-        <ul>
+        <ul className="bulleted-list">
           <li>Add and store pictures and information about dogs you encounter.</li>
           <li>Assign each dog a unique identifier, making it easy to share their profile with friends or fellow dog park visitors.</li>
           <li>Enjoy a user-friendly interface designed to be intuitive and easy to navigate.</li>

@@ -38,7 +38,7 @@ const DogList = () => {
   return (
     <div className="dog-list">
       <div className="title-container">
-        <h1 className="h1-title">Bark Buddy</h1>
+        <h1 className="h1-title">BarkBuddy</h1>
         <img src={process.env.PUBLIC_URL + '/images/dog-head.png'} alt="Dog Head" className="dog-head-image" />
       </div>
       <div className="header-actions">
