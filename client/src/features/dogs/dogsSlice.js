@@ -20,12 +20,12 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTo
 });
 
 // Add Dog
-export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
+export const addDog = createAsyncThunk('dogs/addDog', async ({ formData, token }) => {
   try {
-    const token = await getAccessTokenSilently();  // Ensure this is a function
-    const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
+    const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
@@ -36,9 +36,8 @@ export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTok
 });
 
 // Update Dog
-export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData, getAccessTokenSilently }) => {
+export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData, token }) => {
   try {
-    const token = await getAccessTokenSilently();
     const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -53,9 +52,8 @@ export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formDat
 });
 
 // Delete Dog
-export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, getAccessTokenSilently }) => {
+export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, token }) => {
   try {
-    const token = await getAccessTokenSilently();
     await axios.delete(`${apiUrl}/api/dogs/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,

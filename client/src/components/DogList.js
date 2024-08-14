@@ -29,7 +29,8 @@ const DogList = () => {
 
   const handleDelete = async (id) => {
     try {
-      dispatch(deleteDog({ id, getAccessTokenSilently }));
+      const token = await getAccessTokenSilently();
+      dispatch(deleteDog({ id, token }));
     } catch (error) {
       console.error('Error deleting dog:', error);
     }

@@ -9,8 +9,8 @@ import './AddDog.css';
 const AddDog = () => {
   const { getAccessTokenSilently } = useAuth0();
 
-  // State variables
-  const [name, setName] = useState('');
+  // Reintroduce state variables
+  const [dogName, setDogName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [color, setColor] = useState('');
@@ -19,6 +19,7 @@ const AddDog = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const AddDog = () => {
     const fetchBreeds = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/breeds`);
-        setBreeds(response.data);
+        setBreeds(response.data); // Correct usage of setBreeds
       } catch (error) {
         console.error('Failed to fetch breeds', error);
       }
@@ -45,14 +46,12 @@ const AddDog = () => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    console.log('Form submission started');
 
     try {
       const token = await getAccessTokenSilently();
-      console.log('JWT Token:', token);
 
       const formData = new FormData();
-      formData.append('name', name);
+      formData.append('name', dogName); // Updated to dogName
       formData.append('age', age);
       formData.append('gender', gender);
       formData.append('color', color);
@@ -63,47 +62,38 @@ const AddDog = () => {
         formData.append('image', image);
       }
 
-      console.log('Form data prepared:', formData);
+      await dispatch(addDog({ formData, token }));
 
-      // Pass formData and getAccessTokenSilently to addDog
-      const dogData = {
-        name,
-        age,
-        gender,
-        color,
-        nickname,
-        owner,
-        breed,
-        image: image ? URL.createObjectURL(image) : null,
-      };
-
-      dispatch(addDog({ dog: dogData, getAccessTokenSilently }));
-
-      console.log('Dog added successfully to Redux');
       navigate('/dogs');
     } catch (error) {
       console.error('Failed to add dog:', error);
     } finally {
       setIsSubmitting(false);
-      console.log('Form submission ended');
     }
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImage(null);
+      setImagePreview(null);
+    }
   };
 
   return (
     <div className="add-dog-container">
       <h1>Dog Info</h1>
-      <form onSubmit={handleSubmit} className="dog-form">
+      <form onSubmit={handleSubmit} className="dog-form" encType="multipart/form-data">
         <div className="form-row">
           <label>Dog's Name:</label>
           <input
             type="text"
             placeholder="Dog's Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={dogName}
+            onChange={(e) => setDogName(e.target.value)} // Updated to dogName
             required
           />
         </div>
@@ -167,6 +157,11 @@ const AddDog = () => {
         <div className="form-row">
           <label>Image:</label>
           <input type="file" onChange={handleImageChange} />
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Dog Preview" style={{ width: '150px', marginTop: '10px' }} />
+            </div>
+          )}
         </div>
         <div className="submit-button-container">
           <button type="submit" className="submit-button" disabled={isSubmitting}>
