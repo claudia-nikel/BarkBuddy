@@ -37,10 +37,10 @@ export const fetchOwnedDogs = createAsyncThunk('dogs/fetchOwnedDogs', async ({ g
 });
 
 // Add Dog
-export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
+export const addDog = createAsyncThunk('dogs/addDog', async ({ formData, getAccessTokenSilently }) => {
   try {
-    const token = await getAccessTokenSilently();  // Ensure this is a function
-    const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
+    const token = await getAccessTokenSilently();
+    const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
@@ -53,9 +53,26 @@ export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTok
   }
 });
 
-// Update Dog
+// Update Dog Ownership Status
+export const updateDogOwnership = createAsyncThunk('dogs/updateDogOwnership', async ({ id, dog, getAccessTokenSilently }) => {
+  try {
+    const token = await getAccessTokenSilently();
+    const response = await axios.put(`${apiUrl}/api/dogs/${id}`, dog, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Redux Thunk Error:', error.message);
+    throw error;
+  }
+});
+
+// Update Dog (handles ownership as well)
 export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData, getAccessTokenSilently }) => {
   try {
+    const token = await getAccessTokenSilently();
     const response = await axios.put(`${apiUrl}/api/dogs/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -70,8 +87,9 @@ export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formDat
 });
 
 // Delete Dog
-export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, token }) => {
+export const deleteDog = createAsyncThunk('dogs/deleteDog', async ({ id, getAccessTokenSilently }) => {
   try {
+    const token = await getAccessTokenSilently();
     await axios.delete(`${apiUrl}/api/dogs/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
