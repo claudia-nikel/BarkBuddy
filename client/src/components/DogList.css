@@ -185,3 +185,7 @@ ul {
 .dropdown:hover .dropbtn {
   background-color: #ff4500;
 }
+.owner-icon {
+  margin-left: 10px; /* Add some space between the name and the icon */
+  color: #ff4500; /* Gold color for the star icon */
+}

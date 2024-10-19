@@ -135,8 +135,10 @@ Release Date: August 13, 2024
 - [X] Redo UI 
 
 # V4
-- [ ] Add page for your own dog with unique id
-- [ ] Add ability to add other dogs by their unique id
+- [X] Add page for your own dog with unique id
 
 # V5
-- [ ] Add more details to Dog Detail page
+- [ ] Add location details when adding dogs
+
+# V6
+- [ ] Add ability to add other dogs by their unique id

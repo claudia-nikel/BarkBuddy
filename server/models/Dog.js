@@ -44,6 +44,14 @@ const Dog = sequelize.define('Dog', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isOwner: { 
+    type: Sequelize.BOOLEAN, 
+    defaultValue: false 
+  },
+  notes: {
+    type: Sequelize.TEXT,
+    allowNull: true,
+  },
 
 });
 

@@ -4,6 +4,7 @@ import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import NavBar from './NavBar';  // Import NavBar component
 import './AddDog.css';
 
 const AddDog = () => {
@@ -19,7 +20,6 @@ const AddDog = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
@@ -58,11 +58,26 @@ const AddDog = () => {
       formData.append('nickname', nickname);
       formData.append('owner', owner);
       formData.append('breed', breed);
+      formData.append('notes', notes); // Include notes in form data
       if (image) {
         formData.append('image', image);
       }
 
-      await dispatch(addDog({ formData, token }));
+      console.log('Form data prepared:', formData);
+
+      // Pass formData and getAccessTokenSilently to addDog
+      const dogData = {
+        name,
+        age,
+        gender,
+        color,
+        nickname,
+        owner,
+        breed,
+        image: image ? URL.createObjectURL(image) : null,
+      };
+
+      dispatch(addDog({ dog: dogData, getAccessTokenSilently }));
 
       navigate('/dogs');
     } catch (error) {
@@ -86,14 +101,14 @@ const AddDog = () => {
   return (
     <div className="add-dog-container">
       <h1>Dog Info</h1>
-      <form onSubmit={handleSubmit} className="dog-form" encType="multipart/form-data">
+      <form onSubmit={handleSubmit} className="dog-form">
         <div className="form-row">
           <label>Dog's Name:</label>
           <input
             type="text"
             placeholder="Dog's Name"
-            value={dogName}
-            onChange={(e) => setDogName(e.target.value)} // Updated to dogName
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
@@ -157,11 +172,6 @@ const AddDog = () => {
         <div className="form-row">
           <label>Image:</label>
           <input type="file" onChange={handleImageChange} />
-          {imagePreview && (
-            <div className="image-preview">
-              <img src={imagePreview} alt="Dog Preview" style={{ width: '150px', marginTop: '10px' }} />
-            </div>
-          )}
         </div>
         <div className="submit-button-container">
           <button type="submit" className="submit-button" disabled={isSubmitting}>
@@ -174,4 +184,3 @@ const AddDog = () => {
 };
 
 export default AddDog;
-

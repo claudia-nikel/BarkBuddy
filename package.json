@@ -26,6 +26,7 @@
     "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
     "redux": "^5.0.1",
+    "reselect": "^5.1.1",
     "sequelize": "^6.37.3",
     "uuid": "^10.0.0",
     "web-vitals": "^2.1.4"
