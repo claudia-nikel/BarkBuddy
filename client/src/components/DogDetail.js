@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import NavBar from './NavBar'; // Import NavBar component
 import { updateDog } from '../features/dogs/dogsSlice';
 import axios from 'axios';
 import Papa from 'papaparse';
@@ -11,7 +12,7 @@ const DogDetail = () => {
   const { id } = useParams();
   const dog = useSelector((state) => state.dogs.dogs.find((dog) => dog.id === id));
   const dispatch = useDispatch();
-  const { getAccessTokenSilently } = useAuth0(); 
+  const { getAccessTokenSilently } = useAuth0();
 
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState('');
@@ -22,6 +23,8 @@ const DogDetail = () => {
   const [owner, setOwner] = useState('');
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
+  const [isOwner, setIsOwner] = useState(false); 
+  const [notes, setNotes] = useState(''); 
   const [breedDetails, setBreedDetails] = useState(null);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -37,6 +40,8 @@ const DogDetail = () => {
       setNickname(dog.nickname);
       setOwner(dog.owner);
       setBreed(dog.breed);
+      setIsOwner(dog.isOwner); // Set ownership status
+      setNotes(dog.notes); // Set the notes value
       setImagePreview(dog.image);
     }
   }, [dog]);
@@ -75,6 +80,10 @@ const DogDetail = () => {
     }
   }, [breed, apiUrl]);
 
+  const handleOwnershipChange = async (e) => {
+    setIsOwner(e.target.checked);
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -97,6 +106,8 @@ const DogDetail = () => {
     formData.append('nickname', nickname);
     formData.append('owner', owner);
     formData.append('breed', breed);
+    formData.append('isOwner', isOwner); // Include ownership status
+    formData.append('notes', notes); // Include notes field
     if (image) {
       formData.append('image', image);
     }
@@ -104,7 +115,7 @@ const DogDetail = () => {
     try {
       dispatch(updateDog({ id, formData, getAccessTokenSilently }));
       setEditMode(false);
-      setImagePreview(image ? URL.createObjectURL(image) : dog.image); 
+      setImagePreview(image ? URL.createObjectURL(image) : dog.image);
     } catch (error) {
       console.error('Failed to update dog', error);
     }
@@ -115,105 +126,136 @@ const DogDetail = () => {
   }
 
   return (
-    <div className="dog-detail-container">
-      <button onClick={() => window.history.back()} className="back-button">Back</button>
-      <div className="title-section">
-        <h1 className="dog-title">{name}</h1>
-        <h2 className="dog-subtitle">Dog Details</h2>
+    <>
+      <NavBar /> {/* Include NavBar */}
+      <div className="dog-detail-container">
+        <button onClick={() => window.history.back()} className="back-button">Back</button>
+        <div className="title-section">
+          <h1 className="dog-title">{name}</h1>
+          <h2 className="dog-subtitle">Dog Details</h2>
+        </div>
+        {!editMode ? (
+          <div className="dog-detail-content">
+            <div className="dog-detail-text">
+              <p><strong>Age:</strong> {age}</p>
+              <p><strong>Gender:</strong> {gender}</p>
+              <p><strong>Color:</strong> {color}</p>
+              <p><strong>Nickname:</strong> {nickname}</p>
+              <p><strong>Owner:</strong> {owner}</p>
+              <p><strong>Breed:</strong> {breed}</p>
+              <p><strong>Notes:</strong> {notes}</p> {/* Display the Notes */}
+              <p>
+                <strong>
+                  My Dog?
+                  <input
+                    type="checkbox"
+                    checked={isOwner}
+                    onChange={handleOwnershipChange}
+                    disabled={!editMode} // Disable when not in edit mode
+                  />
+                </strong>
+              </p>
+              <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
+            </div>
+            {imagePreview && (
+              <div className="dog-image-container">
+                <img src={imagePreview} alt={name} className="dog-image" />
+              </div>
+            )}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="dog-detail-content" encType="multipart/form-data">
+            <div className="dog-detail-text">
+              <div className="form-row">
+                <label>Name:</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label>Age:</label>
+                <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label>Gender:</label>
+                <select value={gender} onChange={(e) => setGender(e.target.value)}>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div className="form-row">
+                <label>Color:</label>
+                <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label>Nickname:</label>
+                <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label>Owner:</label>
+                <input type="text" value={owner} onChange={(e) => setOwner(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label>Breed:</label>
+                <select value={breed} onChange={(e) => setBreed(e.target.value)}>
+                  <option value="">Select Breed</option>
+                  {breeds.map((breed, index) => (
+                    <option key={index} value={breed.Name}>{breed.Name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <label>Image:</label>
+                <input type="file" onChange={handleImageChange} />
+              </div>
+              <div className="form-row">
+                <label>Notes:</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Add notes about this dog"
+                />
+              </div>
+              <div className="form-row">
+                <label>My Dog?</label>
+                <input
+                  type="checkbox"
+                  checked={isOwner}
+                  onChange={handleOwnershipChange}
+                />
+              </div>
+              <button type="submit" className="submit-button">Save Changes</button>
+            </div>
+            {imagePreview && (
+              <div className="dog-image-container">
+                <img src={imagePreview} alt={name} className="dog-image" />
+              </div>
+            )}
+          </form>
+        )}
+        {breedDetails && (
+          <div className="breed-details">
+            <h2>Breed Details</h2>
+            <table>
+              <thead>
+                <tr>
+                  {Object.keys(breedDetails).map((key, index) => (
+                    <th key={index}>{key}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {Object.values(breedDetails).map((value, index) => (
+                    <td key={index}>{typeof value === 'string' ? value : JSON.stringify(value)}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      {!editMode ? (
-        <div className="dog-detail-content">
-          <div className="dog-detail-text">
-            <p><strong>Age:</strong> {age}</p>
-            <p><strong>Gender:</strong> {gender}</p>
-            <p><strong>Color:</strong> {color}</p>
-            <p><strong>Nickname:</strong> {nickname}</p>
-            <p><strong>Owner:</strong> {owner}</p>
-            <p><strong>Breed:</strong> {breed}</p>
-            <button onClick={() => setEditMode(true)} className="edit-button">Edit</button>
-          </div>
-          {imagePreview && (
-            <div className="dog-image-container">
-              <img src={imagePreview} alt={name} className="dog-image" />
-            </div>
-          )}
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="dog-detail-content" encType="multipart/form-data">
-          <div className="dog-detail-text">
-            <div className="form-row">
-              <label>Name:</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="form-row">
-              <label>Age:</label>
-              <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
-            </div>
-            <div className="form-row">
-              <label>Gender:</label>
-              <select value={gender} onChange={(e) => setGender(e.target.value)}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div className="form-row">
-              <label>Color:</label>
-              <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
-            </div>
-            <div className="form-row">
-              <label>Nickname:</label>
-              <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-            </div>
-            <div className="form-row">
-              <label>Owner:</label>
-              <input type="text" value={owner} onChange={(e) => setOwner(e.target.value)} />
-            </div>
-            <div className="form-row">
-              <label>Breed:</label>
-              <select value={breed} onChange={(e) => setBreed(e.target.value)}>
-                <option value="">Select Breed</option>
-                {breeds.map((breed, index) => (
-                  <option key={index} value={breed.Name}>{breed.Name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <label>Image:</label>
-              <input type="file" onChange={handleImageChange} />
-            </div>
-            <button type="submit" className="submit-button">Save Changes</button>
-          </div>
-          {imagePreview && (
-            <div className="dog-image-container">
-              <img src={imagePreview} alt={name} className="dog-image" />
-            </div>
-          )}
-        </form>
-      )}
-
-      {breedDetails && (
-        <div className="breed-details">
-          <h2>Breed Details</h2>
-          <table>
-            <thead>
-              <tr>
-                {Object.keys(breedDetails).map((key, index) => (
-                  <th key={index}>{key}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {Object.values(breedDetails).map((value, index) => (
-                  <td key={index}>{typeof value === 'string' ? value : JSON.stringify(value)}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
 export default DogDetail;
+

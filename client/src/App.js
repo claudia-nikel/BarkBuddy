@@ -4,6 +4,7 @@ import DogList from './components/DogList';
 import AddDog from './components/AddDog';
 import DogDetail from './components/DogDetail';
 import LandingPage from './pages/LandingPage';
+import MyDogs from './components/MyDogs';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/dogs" element={<DogList />} />
         <Route path="/add-dog" element={<AddDog />} />
         <Route path="/dog/:id" element={<DogDetail />} />
+        <Route path="/my-dogs" element={<MyDogs />} />
       </Routes>
     </div>
   );

@@ -4,6 +4,7 @@ import { addDog } from '../features/dogs/dogsSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import NavBar from './NavBar';  // Import NavBar component
 import './AddDog.css';
 
 const AddDog = () => {
@@ -19,6 +20,7 @@ const AddDog = () => {
   const [breed, setBreed] = useState('');
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
+  const [notes, setNotes] = useState(''); // New notes field
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
@@ -59,6 +61,7 @@ const AddDog = () => {
       formData.append('nickname', nickname);
       formData.append('owner', owner);
       formData.append('breed', breed);
+      formData.append('notes', notes); // Include notes in form data
       if (image) {
         formData.append('image', image);
       }
@@ -66,18 +69,7 @@ const AddDog = () => {
       console.log('Form data prepared:', formData);
 
       // Pass formData and getAccessTokenSilently to addDog
-      const dogData = {
-        name,
-        age,
-        gender,
-        color,
-        nickname,
-        owner,
-        breed,
-        image: image ? URL.createObjectURL(image) : null,
-      };
-
-      dispatch(addDog({ dog: dogData, getAccessTokenSilently }));
+      dispatch(addDog({ formData, getAccessTokenSilently }));
 
       console.log('Dog added successfully to Redux');
       navigate('/dogs');
@@ -94,89 +86,99 @@ const AddDog = () => {
   };
 
   return (
-    <div className="add-dog-container">
-      <h1>Dog Info</h1>
-      <form onSubmit={handleSubmit} className="dog-form">
-        <div className="form-row">
-          <label>Dog's Name:</label>
-          <input
-            type="text"
-            placeholder="Dog's Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <label>Age:</label>
-          <input
-            type="number"
-            placeholder="Age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <label>Gender:</label>
-          <select value={gender} onChange={(e) => setGender(e.target.value)} className="short-select" required>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <div className="form-row">
-          <label>Color:</label>
-          <input
-            type="text"
-            placeholder="Color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-row">
-          <label>Nickname:</label>
-          <input
-            type="text"
-            placeholder="Nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-        </div>
-        <div className="form-row">
-          <label>Owner's Name:</label>
-          <input
-            type="text"
-            placeholder="Owner's Name"
-            value={owner}
-            onChange={(e) => setOwner(e.target.value)}
-          />
-        </div>
-        <div className="form-row">
-          <label>Breed:</label>
-          <select value={breed} onChange={(e) => setBreed(e.target.value)} className="short-select" required>
-            <option value="">Select Breed</option>
-            {breeds.map((breed, index) => (
-              <option key={index} value={breed.Name}>
-                {breed.Name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-row">
-          <label>Image:</label>
-          <input type="file" onChange={handleImageChange} />
-        </div>
-        <div className="submit-button-container">
-          <button type="submit" className="submit-button" disabled={isSubmitting}>
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
+    <>
+      <NavBar /> {/* Include NavBar at the top */}
+      <div className="add-dog-container">
+        <h1>Dog Info</h1>
+        <form onSubmit={handleSubmit} className="dog-form">
+          <div className="form-row">
+            <label>Dog's Name:</label>
+            <input
+              type="text"
+              placeholder="Dog's Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-row">
+            <label>Age:</label>
+            <input
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-row">
+            <label>Gender:</label>
+            <select value={gender} onChange={(e) => setGender(e.target.value)} className="short-select" required>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div className="form-row">
+            <label>Color:</label>
+            <input
+              type="text"
+              placeholder="Color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-row">
+            <label>Nickname:</label>
+            <input
+              type="text"
+              placeholder="Nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <label>Owner's Name:</label>
+            <input
+              type="text"
+              placeholder="Owner's Name"
+              value={owner}
+              onChange={(e) => setOwner(e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <label>Breed:</label>
+            <select value={breed} onChange={(e) => setBreed(e.target.value)} className="short-select" required>
+              <option value="">Select Breed</option>
+              {breeds.map((breed, index) => (
+                <option key={index} value={breed.Name}>
+                  {breed.Name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-row">
+            <label>Notes:</label>
+            <textarea
+              placeholder="Notes about this dog"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <label>Image:</label>
+            <input type="file" onChange={handleImageChange} />
+          </div>
+          <div className="submit-button-container">
+            <button type="submit" className="submit-button" disabled={isSubmitting}>
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
 export default AddDog;
-

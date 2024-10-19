@@ -155,6 +155,8 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
     }
 
     const age = req.body.age ? parseInt(req.body.age, 10) : null;
+    const isOwner = req.body.isOwner === 'true';  // Handle isOwner
+
     const dog = await Dog.create({
       name: req.body.name,
       age: age || 0,
@@ -163,7 +165,9 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
       nickname: req.body.nickname || '',
       owner: req.body.owner || 'Unknown',
       breed: req.body.breed || 'Unknown',
+      notes: req.body.notes || '',
       image: imageUrl,
+      isOwner,  // Add isOwner here
       user_id: req.user.sub // Ensure user_id is set from authenticated user
     });
     res.json(dog);
@@ -240,6 +244,8 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
     dog.nickname = req.body.nickname || dog.nickname;
     dog.owner = req.body.owner || dog.owner;
     dog.breed = req.body.breed || dog.breed;
+    dog.isOwner = req.body.isOwner === 'true'; 
+    dog.notes = req.body.notes || dog.notes; 
     dog.image = imageUrl;
 
     await dog.save();
@@ -249,6 +255,7 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Sync the database and start the server
 sequelize.sync({ alter: true }).then(() => {

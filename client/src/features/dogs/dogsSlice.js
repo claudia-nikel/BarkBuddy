@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { createSelector } from 'reselect';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-// Fetch Dogs
+// Fetch All Dogs
 export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTokenSilently }) => {
   try {
     const token = await getAccessTokenSilently();
@@ -19,11 +20,11 @@ export const fetchDogs = createAsyncThunk('dogs/fetchDogs', async ({ getAccessTo
   }
 });
 
-// Add Dog
-export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTokenSilently }) => {
+// Fetch Only Owned Dogs (corrected endpoint)
+export const fetchOwnedDogs = createAsyncThunk('dogs/fetchOwnedDogs', async ({ getAccessTokenSilently }) => {
   try {
-    const token = await getAccessTokenSilently();  // Ensure this is a function
-    const response = await axios.post(`${apiUrl}/api/dogs`, dog, {
+    const token = await getAccessTokenSilently();
+    const response = await axios.get(`${apiUrl}/api/dogs/my-dogs`, { // Updated endpoint
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -35,7 +36,40 @@ export const addDog = createAsyncThunk('dogs/addDog', async ({ dog, getAccessTok
   }
 });
 
-// Update Dog
+// Add Dog
+export const addDog = createAsyncThunk('dogs/addDog', async ({ formData, getAccessTokenSilently }) => {
+  try {
+    const token = await getAccessTokenSilently();
+    const response = await axios.post(`${apiUrl}/api/dogs`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Redux Thunk Error:', error.message);
+    throw error;
+  }
+});
+
+// Update Dog Ownership Status
+export const updateDogOwnership = createAsyncThunk('dogs/updateDogOwnership', async ({ id, dog, getAccessTokenSilently }) => {
+  try {
+    const token = await getAccessTokenSilently();
+    const response = await axios.put(`${apiUrl}/api/dogs/${id}`, dog, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Redux Thunk Error:', error.message);
+    throw error;
+  }
+});
+
+// Update Dog (handles ownership as well)
 export const updateDog = createAsyncThunk('dogs/updateDog', async ({ id, formData, getAccessTokenSilently }) => {
   try {
     const token = await getAccessTokenSilently();
@@ -84,6 +118,12 @@ export const fetchDogCount = createAsyncThunk('dogs/fetchDogCount', async ({ get
   }
 });
 
+// Memoized selector for owned dogs
+export const selectOwnedDogs = createSelector(
+  (state) => state.dogs.dogs,
+  (dogs) => dogs.filter((dog) => dog.isOwner)
+);
+
 // Create the dogs slice
 const dogsSlice = createSlice({
   name: 'dogs',
@@ -97,9 +137,18 @@ const dogsSlice = createSlice({
       .addCase(fetchDogs.fulfilled, (state, action) => {
         state.dogs = action.payload;
       })
+      .addCase(fetchOwnedDogs.fulfilled, (state, action) => { // Handle owned dogs
+        state.dogs = action.payload;
+      })
       .addCase(addDog.fulfilled, (state, action) => {
         state.dogs.push(action.payload);
         state.count += 1;
+      })
+      .addCase(updateDogOwnership.fulfilled, (state, action) => { // Handle ownership update
+        const index = state.dogs.findIndex((dog) => dog.id === action.payload.id);
+        if (index !== -1) {
+          state.dogs[index] = action.payload;
+        }
       })
       .addCase(updateDog.fulfilled, (state, action) => {
         const index = state.dogs.findIndex((dog) => dog.id === action.payload.id);
