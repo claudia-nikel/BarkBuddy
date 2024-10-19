@@ -34,8 +34,7 @@ const DogList = ({ showOwnedDogs }) => {
 
   const handleDelete = async (id) => {
     try {
-      const token = await getAccessTokenSilently();
-      dispatch(deleteDog({ id, token }));
+      dispatch(deleteDog({ id, getAccessTokenSilently }));
     } catch (error) {
       console.error('Error deleting dog:', error);
     }

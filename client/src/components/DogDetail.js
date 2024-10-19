@@ -97,7 +97,7 @@ const DogDetail = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('age', age);
@@ -111,10 +111,9 @@ const DogDetail = () => {
     if (image) {
       formData.append('image', image);
     }
-  
+
     try {
-      const token = await getAccessTokenSilently();
-      dispatch(updateDog({ id, formData, token }));
+      dispatch(updateDog({ id, formData, getAccessTokenSilently }));
       setEditMode(false);
       setImagePreview(image ? URL.createObjectURL(image) : dog.image);
     } catch (error) {
@@ -144,7 +143,7 @@ const DogDetail = () => {
               <p><strong>Nickname:</strong> {nickname}</p>
               <p><strong>Owner:</strong> {owner}</p>
               <p><strong>Breed:</strong> {breed}</p>
-              <p><strong>Notes:</strong> {notes}</p> {/* Display the Notes */}
+              <p><strong>Notes:</strong> {notes || ''}</p>
               <p>
                 <strong>
                   My Dog?
@@ -259,4 +258,3 @@ const DogDetail = () => {
 };
 
 export default DogDetail;
-

@@ -21,6 +21,7 @@ const AddDog = () => {
   const [breeds, setBreeds] = useState([]);
   const [image, setImage] = useState(null);
   const [notes, setNotes] = useState(''); // New notes field
+  const [isOwner, setIsOwner] = useState(false); // New state for ownership
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ const AddDog = () => {
       formData.append('owner', owner);
       formData.append('breed', breed);
       formData.append('notes', notes); // Include notes in form data
+      formData.append('isOwner', isOwner); // Include ownership status
       if (image) {
         formData.append('image', image);
       }
@@ -164,6 +166,14 @@ const AddDog = () => {
               placeholder="Notes about this dog"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+            />
+          </div>
+          <div className="form-row">
+            <label>My Dog?</label>
+            <input
+              type="checkbox"
+              checked={isOwner}
+              onChange={(e) => setIsOwner(e.target.checked)}
             />
           </div>
           <div className="form-row">

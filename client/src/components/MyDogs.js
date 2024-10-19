@@ -55,4 +55,3 @@ const MyDogs = () => {
 };
 
 export default MyDogs;
-

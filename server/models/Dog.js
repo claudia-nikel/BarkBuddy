@@ -56,4 +56,3 @@ const Dog = sequelize.define('Dog', {
 });
 
 module.exports = Dog;
-

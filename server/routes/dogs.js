@@ -55,17 +55,15 @@ router.get('/my-dogs', checkJwt, async (req, res) => {
   }
 });
 
-// Update an existing dog for the authenticated user, including ownership status and notes
+// Update an existing dog for the authenticated user
 router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { name, age, gender, color, nickname, owner, breed, isOwner, notes } = req.body;  // Add "notes" field here
   const image = req.file ? req.file.buffer : null;
 
   try {
-    console.log('Received request to update dog with id:', id, 'for user:', req.user.sub);
     const dog = await Dog.findOne({ where: { id, user_id: req.user.sub } });
     if (!dog) {
-      console.error('Dog not found');
       return res.status(404).json({ error: 'Dog not found' });
     }
 
@@ -77,18 +75,13 @@ router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
     dog.nickname = nickname;
     dog.owner = owner;
     dog.breed = breed;
+    dog.isOwner = isOwner !== undefined ? isOwner : dog.isOwner;  // Only update if isOwner is provided
+    dog.notes = notes !== undefined ? notes : dog.notes;  // Allow updating notes to empty string
     if (image) {
       dog.image = image;
     }
-    if (isOwner !== undefined) { // Only update if isOwner is provided
-      dog.isOwner = isOwner;
-    }
-    if (notes !== undefined) { // Update notes
-      dog.notes = notes;
-    }
 
     await dog.save();
-    console.log('Successfully updated dog:', dog);
     res.json(dog);
   } catch (error) {
     console.error('Failed to update dog:', error);
