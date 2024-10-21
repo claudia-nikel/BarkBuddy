@@ -107,7 +107,7 @@ const DogDetail = () => {
     formData.append('owner', owner);
     formData.append('breed', breed);
     formData.append('isOwner', isOwner); // Include ownership status
-    formData.append('notes', notes); // Include notes field
+    formData.append('notes', notes || '');  // Ensure notes is added, even if blank
     if (image) {
       formData.append('image', image);
     }

@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import './LandingPage.css';
 
-// Import images
 const dogListPreview = process.env.PUBLIC_URL + '/images/dog-list-preview.png';
 const dogDetailPreview = process.env.PUBLIC_URL + '/images/dog-detail-preview.png';
-const dogHeadImage = process.env.PUBLIC_URL + '/images/dog-head.png'; // Added the dog-head image
+const dogHeadImage = process.env.PUBLIC_URL + '/images/dog-head.png'; 
 
 const LandingPage = () => {
   const { loginWithRedirect } = useAuth0();
@@ -20,6 +19,20 @@ const LandingPage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setModalImage('');
+  };
+
+  // Use Auth0 loginWithRedirect for login
+  const handleLogin = () => {
+    loginWithRedirect(); // This will redirect the user to the login page
+  };
+
+  // Use Auth0 loginWithRedirect with screen_hint for signup
+  const handleSignup = () => {
+    loginWithRedirect({
+      authorizationParams: {
+        screen_hint: "signup",
+       } // This tells Auth0 to show the signup page
+    });
   };
 
   return (
@@ -42,9 +55,10 @@ const LandingPage = () => {
       </div>
 
       <div className="auth-buttons">
-        <button onClick={() => loginWithRedirect()} className="login-button">Login</button>
-        <button onClick={() => loginWithRedirect()} className="signup-button">Sign Up</button>
+        <button onClick={handleLogin} className="login-button">Login</button>
+        <button onClick={handleSignup} className="signup-button">Sign Up</button>
       </div>
+
 
       <div className="preview">
         <h2>Preview the App</h2>
@@ -76,4 +90,6 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
+
 

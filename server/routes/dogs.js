@@ -76,7 +76,7 @@ router.put('/:id', checkJwt, upload.single('image'), async (req, res) => {
     dog.owner = owner;
     dog.breed = breed;
     dog.isOwner = isOwner !== undefined ? isOwner : dog.isOwner;  // Only update if isOwner is provided
-    dog.notes = notes !== undefined ? notes : dog.notes;  // Allow updating notes to empty string
+    dog.notes = notes !== undefined ? notes : '';  // Ensure blank notes are stored as empty string
     if (image) {
       dog.image = image;
     }
