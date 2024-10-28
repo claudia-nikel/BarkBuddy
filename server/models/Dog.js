@@ -1,6 +1,6 @@
-// models/Dog.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Location = require('./Location');  // Import the Location model
 
 const Dog = sequelize.define('Dog', {
   id: {
@@ -37,7 +37,7 @@ const Dog = sequelize.define('Dog', {
     allowNull: false,
   },
   image: {
-    type: DataTypes.STRING, // Make sure this is STRING type to store the URL
+    type: DataTypes.STRING, // URL to store the image
     allowNull: true,
   },
   user_id: {
@@ -46,13 +46,18 @@ const Dog = sequelize.define('Dog', {
   },
   isOwner: { 
     type: Sequelize.BOOLEAN, 
-    defaultValue: false 
+    defaultValue: false, 
   },
   notes: {
     type: Sequelize.TEXT,
     allowNull: true,
   },
-
+}, {
+  timestamps: true,  // Adds createdAt and updatedAt fields automatically
 });
+
+// Define the relationship
+Dog.hasMany(Location, { foreignKey: 'dog_id', onDelete: 'CASCADE' });
+Location.belongsTo(Dog, { foreignKey: 'dog_id' });
 
 module.exports = Dog;

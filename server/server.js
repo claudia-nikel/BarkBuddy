@@ -11,7 +11,14 @@ const dotenv = require('dotenv');
 const checkJwt = require('./middleware/auth');
 const Dog = require('./models/Dog');
 
-// Load environment variables from the appropriate .env file
+console.log("Backend server is starting...");
+
+// Import routes
+const dogRoutes = require('./routes/dogs');
+const locationRoutes = require('./routes/locations');
+const breedRoutes = require('./routes/breeds');
+
+// Load environment variables
 const env = process.env.NODE_ENV || 'development';
 dotenv.config({ path: path.resolve(__dirname, `.env.${env}`) });
 
@@ -94,11 +101,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(checkJwt); // Apply the JWT middleware here
+app.use(checkJwt);
 
 app.use((req, res, next) => {
   console.log('After checkJwt middleware');
-  console.log('User:', req.user); // Log the user object to verify it's populated
+  console.log('User:', req.user);
   next();
 });
 
@@ -108,7 +115,7 @@ app.get('/api/dogs', async (req, res) => {
     console.log('GET /api/dogs');
     const dogs = await Dog.findAll({
       where: {
-        user_id: req.user.sub // Fetch only dogs associated with the authenticated user
+        user_id: req.user.sub
       }
     });
     res.json(dogs);
@@ -118,27 +125,11 @@ app.get('/api/dogs', async (req, res) => {
   }
 });
 
-// Add the `/api/dogs/count` route to fetch the count of dogs for the authenticated user
-app.get('/api/dogs/count', async (req, res) => {
-  try {
-    console.log('GET /api/dogs/count');
-    const dogCount = await Dog.count({
-      where: {
-        user_id: req.user.sub // Count only dogs associated with the authenticated user
-      }
-    });
-    res.json({ count: dogCount });
-  } catch (error) {
-    console.error('Error fetching dog count:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // POST route to add a new dog
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
     console.log('POST /api/dogs');
-    console.log('User:', req.user);  // Log the user object to verify it's populated
+    console.log('Request body:', req.body);
 
     let imageUrl = null;
     if (req.file) {
@@ -155,8 +146,6 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
     }
 
     const age = req.body.age ? parseInt(req.body.age, 10) : null;
-    const isOwner = req.body.isOwner === 'true';  // Handle isOwner
-
     const dog = await Dog.create({
       name: req.body.name,
       age: age || 0,
@@ -165,14 +154,87 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
       nickname: req.body.nickname || '',
       owner: req.body.owner || 'Unknown',
       breed: req.body.breed || 'Unknown',
-      notes: req.body.notes || '',
       image: imageUrl,
-      isOwner,  // Add isOwner here
-      user_id: req.user.sub // Ensure user_id is set from authenticated user
+      user_id: req.user.sub,
+      isOwner: req.body.isOwner === 'true' || req.body.isOwner === true,
+      notes: req.body.notes || ''
     });
     res.json(dog);
   } catch (error) {
     console.error('Error creating dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT route to update a dog by ID
+app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
+  try {
+    console.log('PUT /api/dogs/:id');
+    console.log('Request body:', req.body);
+
+    const dogId = req.params.id;
+    const { name, age, gender, color, nickname, owner, breed, isOwner, notes } = req.body;
+
+    const dog = await Dog.findOne({
+      where: {
+        id: dogId,
+        user_id: req.user.sub
+      }
+    });
+
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
+
+    let imageUrl = dog.image;
+    if (req.file) {
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${Date.now()}_${req.file.originalname}`,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype
+      };
+
+      const uploadResult = await s3.upload(params).promise();
+      imageUrl = uploadResult.Location;
+      console.log('Image uploaded successfully:', imageUrl);
+    }
+
+    dog.name = name || dog.name;
+    dog.age = age ? parseInt(age, 10) : dog.age;
+    dog.gender = gender || dog.gender;
+    dog.color = color || dog.color;
+    dog.nickname = nickname || dog.nickname;
+    dog.owner = owner || dog.owner;
+    dog.breed = breed || dog.breed;
+    dog.image = imageUrl;
+    dog.isOwner = isOwner === 'true' || isOwner === true;
+    dog.notes = notes || dog.notes;
+
+    console.log('Before saving:', dog);
+
+    await dog.save();
+
+    console.log('Dog successfully updated:', dog);
+    res.json(dog);
+  } catch (error) {
+    console.error('Error updating dog:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Fetch the count of dogs for the authenticated user
+app.get('/api/dogs/count', async (req, res) => {
+  try {
+    console.log('GET /api/dogs/count');
+    const dogCount = await Dog.count({
+      where: {
+        user_id: req.user.sub // Count only dogs associated with the authenticated user
+      }
+    });
+    res.json({ count: dogCount });
+  } catch (error) {
+    console.error('Error fetching dog count:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -204,58 +266,9 @@ app.delete('/api/dogs/:id', async (req, res) => {
   }
 });
 
-// PUT route to update a dog by ID
-app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
-  try {
-    console.log('PUT /api/dogs/:id');
-    const dogId = req.params.id;
 
-    // Verify that the dog belongs to the authenticated user
-    const dog = await Dog.findOne({
-      where: {
-        id: dogId,
-        user_id: req.user.sub
-      }
-    });
-
-    if (!dog) {
-      return res.status(404).json({ error: 'Dog not found' });
-    }
-
-    let imageUrl = dog.image; // Keep the current image URL unless a new one is provided
-    if (req.file) {
-      const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `${Date.now()}_${req.file.originalname}`,
-        Body: req.file.buffer,
-        ContentType: req.file.mimetype
-      };
-
-      const uploadResult = await s3.upload(params).promise();
-      imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl);
-    }
-
-    // Update dog attributes
-    dog.name = req.body.name || dog.name;
-    dog.age = req.body.age ? parseInt(req.body.age, 10) : dog.age;
-    dog.gender = req.body.gender || dog.gender;
-    dog.color = req.body.color || dog.color;
-    dog.nickname = req.body.nickname || dog.nickname;
-    dog.owner = req.body.owner || dog.owner;
-    dog.breed = req.body.breed || dog.breed;
-    dog.isOwner = req.body.isOwner === 'true'; 
-    dog.notes = req.body.notes || dog.notes; 
-    dog.image = imageUrl;
-
-    await dog.save();
-    res.json(dog);
-  } catch (error) {
-    console.error('Error updating dog:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
+// Register the locations route for handling location data
+app.use('/locations', locationRoutes);
 
 // Sync the database and start the server
 sequelize.sync({ alter: true }).then(() => {
