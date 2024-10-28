@@ -130,15 +130,21 @@ Release Date: August 11, 2024
 - [X] Minor UI changes
 - [X] Add Landing Page
 
-# V3 (Current)
+# V3
 Release Date: August 13, 2024
 - [X] Redo UI 
 
 # V4
+Release Date: October 19, 2024
 - [X] Add page for your own dog with unique id
 
-# V5
-- [ ] Add location details when adding dogs
+# V5 (Current)
+Release Date: October 27, 2024
+- [X] Add location details when adding dogs
+- [X] Add loading spinner
 
 # V6
+- UI Refactor
+
+# V7
 - [ ] Add ability to add other dogs by their unique id
