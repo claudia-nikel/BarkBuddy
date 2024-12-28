@@ -1,15 +1,13 @@
 .add-dog-container {
+  /* Remove text-align to avoid centering and control container width */
   position: relative;
-  padding: 10px;
-  text-align: left; /* Align text to the left */
+  padding: 20px;
+  max-width: 600px; /* Control the width for a compact form */
+  margin-left: 0; /* Align the form to the left */
 }
 
 .form-row {
-  margin-bottom: 15px;
-}
-
-.short-select {
-  width: 200px; /* Adjust the width as needed */
+  margin-bottom: 10px; /* Reduce space between fields */
 }
 
 .submit-button-container {
@@ -19,7 +17,7 @@
 
 .submit-button {
   padding: 10px 20px;
-  background-color: #ff4500;
+  background-color: #ff4500 !important;
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -30,13 +28,20 @@
 }
 
 .submit-button:hover {
-  background-color: #e63900;
+  background-color: #ff4500 !important;
 }
 
 .loading-spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
 }
 
+.label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333; /* Ensure label is visible in light mode */
+  margin-bottom: 5px;
+}

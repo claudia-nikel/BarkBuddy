@@ -1,83 +1,137 @@
-/* src/components/MyDogs.css */
+.my-dogs-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
 
-/* General styling for My Dogs page */
-.my-dogs {
-    padding: 20px;
-  }
-  
-  .h1-title {
-    margin-bottom: 20px;
-    font-size: 50px;
-    font-weight: bold;
-    color: #ff4500;
-  }
-  
-  /* List styling */
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  /* Individual dog item styling */
-  .dog-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dog-item:hover {
-    border-color: #ffcc00;
-  }
-  
-  /* Link styling */
-  .dog-link {
-    text-decoration: none;
-    color: inherit;
-    flex-grow: 1;
-    display: flex;
-  }
-  
-  /* Dog item content styling */
-  .dog-item-content {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-  }
-  
-  .dog-name {
-    margin-right: auto;
-    font-weight: bold;
-    text-decoration: none;
-    color: #000;
-  }
-  
-  .dog-breed {
-    margin-left: auto;
-    margin-right: 10px;
-    color: grey;
-  }
-  
-  /* Add Dog button styling */
-  .add-dog-link {
-    background-color: #ff4500;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .add-dog-link:hover {
-    background-color: #ff4500;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
-  
+.my-dogs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.my-dogs-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #141414;
+}
+
+.add-dog-button {
+  background-color: #ff4500;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.add-dog-button:hover {
+  background-color: #ff4500;
+}
+
+.dog-count-box {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.dog-card {
+  position: relative;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dog-card-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.dog-card:hover .dog-card-overlay {
+  opacity: 1;
+}
+
+.delete-icon {
+  background-color: #ff4500;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.delete-icon:hover {
+  background-color: #ff4500;
+}
+
+.dog-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dog-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 10px;
+}
+
+.dog-info {
+  text-align: center;
+}
+
+.dog-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #141414;
+  margin-bottom: 5px;
+}
+
+.dog-breed {
+  font-size: 14px;
+  color: #888;
+}
+
+.owner-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 18px;
+  color: #ff4500;
+}

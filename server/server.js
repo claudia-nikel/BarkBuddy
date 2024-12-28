@@ -84,7 +84,6 @@ app.use((req, res, next) => {
 // Routes that don't require authentication
 app.get('/api/breeds', async (req, res) => {
   try {
-    console.log('GET /api/breeds');
     const filePath = path.join(__dirname, 'public', 'dog_breeds.csv');
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const results = Papa.parse(fileContent, { header: true });
@@ -112,11 +111,8 @@ app.use((req, res, next) => {
 // Routes that require authentication
 app.get('/api/dogs', async (req, res) => {
   try {
-    console.log('GET /api/dogs');
     const dogs = await Dog.findAll({
-      where: {
-        user_id: req.user.sub
-      }
+      where: { user_id: req.user.sub }
     });
     res.json(dogs);
   } catch (error) {
@@ -128,8 +124,10 @@ app.get('/api/dogs', async (req, res) => {
 // POST route to add a new dog
 app.post('/api/dogs', upload.single('image'), async (req, res) => {
   try {
-    console.log('POST /api/dogs');
-    console.log('Request body:', req.body);
+    const {
+      name, age, gender, color, nickname, owner, owner2, breed, size,
+      isFriendly, isFavorite, neighborhood, isOwner, notes
+    } = req.body;
 
     let imageUrl = null;
     if (req.file) {
@@ -139,26 +137,18 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
         Body: req.file.buffer,
         ContentType: req.file.mimetype
       };
-
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl);
     }
 
-    const age = req.body.age ? parseInt(req.body.age, 10) : null;
     const dog = await Dog.create({
-      name: req.body.name,
-      age: age || 0,
-      gender: req.body.gender || 'Unknown',
-      color: req.body.color || 'Unknown',
-      nickname: req.body.nickname || '',
-      owner: req.body.owner || 'Unknown',
-      breed: req.body.breed || 'Unknown',
-      image: imageUrl,
-      user_id: req.user.sub,
-      isOwner: req.body.isOwner === 'true' || req.body.isOwner === true,
-      notes: req.body.notes || ''
+      name, age, gender, color, nickname, owner, owner2, breed, size,
+      isFriendly: isFriendly === 'true' || isFriendly === true,
+      isFavorite: isFavorite === 'true' || isFavorite === true,
+      neighborhood, image: imageUrl, user_id: req.user.sub,
+      isOwner: isOwner === 'true' || isOwner === true, notes
     });
+
     res.json(dog);
   } catch (error) {
     console.error('Error creating dog:', error);
@@ -169,22 +159,17 @@ app.post('/api/dogs', upload.single('image'), async (req, res) => {
 // PUT route to update a dog by ID
 app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
   try {
-    console.log('PUT /api/dogs/:id');
-    console.log('Request body:', req.body);
-
-    const dogId = req.params.id;
-    const { name, age, gender, color, nickname, owner, breed, isOwner, notes } = req.body;
+    const { id } = req.params;
+    const {
+      name, age, gender, color, nickname, owner, owner2, breed, size,
+      isFriendly, isFavorite, neighborhood, isOwner, notes
+    } = req.body;
 
     const dog = await Dog.findOne({
-      where: {
-        id: dogId,
-        user_id: req.user.sub
-      }
+      where: { id, user_id: req.user.sub }
     });
 
-    if (!dog) {
-      return res.status(404).json({ error: 'Dog not found' });
-    }
+    if (!dog) return res.status(404).json({ error: 'Dog not found' });
 
     let imageUrl = dog.image;
     if (req.file) {
@@ -194,28 +179,18 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
         Body: req.file.buffer,
         ContentType: req.file.mimetype
       };
-
       const uploadResult = await s3.upload(params).promise();
       imageUrl = uploadResult.Location;
-      console.log('Image uploaded successfully:', imageUrl);
     }
 
-    dog.name = name || dog.name;
-    dog.age = age ? parseInt(age, 10) : dog.age;
-    dog.gender = gender || dog.gender;
-    dog.color = color || dog.color;
-    dog.nickname = nickname || dog.nickname;
-    dog.owner = owner || dog.owner;
-    dog.breed = breed || dog.breed;
-    dog.image = imageUrl;
-    dog.isOwner = isOwner === 'true' || isOwner === true;
-    dog.notes = notes || dog.notes;
-
-    console.log('Before saving:', dog);
+    Object.assign(dog, {
+      name, age, gender, color, nickname, owner, owner2, breed, size,
+      isFriendly: isFriendly === 'true' || isFriendly === true,
+      isFavorite: isFavorite === 'true' || isFavorite === true,
+      neighborhood, image: imageUrl, isOwner: isOwner === 'true' || isOwner === true, notes
+    });
 
     await dog.save();
-
-    console.log('Dog successfully updated:', dog);
     res.json(dog);
   } catch (error) {
     console.error('Error updating dog:', error);
@@ -226,11 +201,8 @@ app.put('/api/dogs/:id', upload.single('image'), async (req, res) => {
 // Fetch the count of dogs for the authenticated user
 app.get('/api/dogs/count', async (req, res) => {
   try {
-    console.log('GET /api/dogs/count');
     const dogCount = await Dog.count({
-      where: {
-        user_id: req.user.sub // Count only dogs associated with the authenticated user
-      }
+      where: { user_id: req.user.sub }
     });
     res.json({ count: dogCount });
   } catch (error) {
@@ -242,40 +214,26 @@ app.get('/api/dogs/count', async (req, res) => {
 // DELETE route to delete a dog by ID
 app.delete('/api/dogs/:id', async (req, res) => {
   try {
-    console.log('DELETE /api/dogs/:id');
-    const dogId = req.params.id;
-
-    // Verify that the dog belongs to the authenticated user
+    const { id } = req.params;
     const dog = await Dog.findOne({
-      where: {
-        id: dogId,
-        user_id: req.user.sub
-      }
+      where: { id, user_id: req.user.sub }
     });
 
-    if (!dog) {
-      return res.status(404).json({ error: 'Dog not found' });
-    }
+    if (!dog) return res.status(404).json({ error: 'Dog not found' });
 
-    // Delete the dog
     await dog.destroy();
-    res.status(204).send(); // No Content response to indicate successful deletion
+    res.status(204).send();
   } catch (error) {
     console.error('Error deleting dog:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-
-// Register the locations route for handling location data
+// Register routes
 app.use('/locations', locationRoutes);
 
-// Sync the database and start the server
+// Sync database and start server
 sequelize.sync({ alter: true }).then(() => {
   const PORT = process.env.PORT || 8080;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}).catch(error => {
-  console.error('Error syncing database:', error);
-});
+  app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+}).catch(error => console.error('Error syncing database:', error));

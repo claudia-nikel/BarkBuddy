@@ -138,13 +138,17 @@ Release Date: August 13, 2024
 Release Date: October 19, 2024
 - [X] Add page for your own dog with unique id
 
-# V5 (Current)
+# V5
 Release Date: October 27, 2024
 - [X] Add location details when adding dogs
 - [X] Add loading spinner
 
-# V6
-- UI Refactor
+# V6 (Current)
+Release Date: December 27, 2024
+- [X] UI Refactor
+- [X] Add more details to dogs: second owner, neighborhood, and friendliness
+- [X] Add ability to Favorite a dog
+- [X] Add search bar to find dogs by name
 
 # V7
 - [ ] Add ability to add other dogs by their unique id

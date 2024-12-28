@@ -1,9 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-body {
-  font-family: 'Poppins', sans-serif;
-}
-
 /* General Styling for Dog List Page */
 .dog-list {
   padding: 20px;
@@ -14,34 +8,33 @@ body {
 .title-container {
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the content horizontally */
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-/* Title Styling */
 .h1-title {
-  margin-right: 20px; /* Add some space between the title and the image */
+  margin-right: 20px;
   font-size: 50px;
   font-weight: bold;
   color: #ff4500;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Dog Head Image Styling */
 .dog-head-image {
-  width: 100px; /* Make the image larger */
+  width: 100px;
   height: auto;
 }
 
-/* Header Actions */
+/* Header Actions Styling */
 .header-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 0 10px;
 }
 
-/* Add Dog Button Styling */
-.add-dog-link {
+.add-buddy-link {
   background-color: #ff4500;
   color: white;
   padding: 10px 20px;
@@ -53,139 +46,111 @@ body {
   transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.add-dog-link:hover {
+.add-buddy-link:hover {
   background-color: #ff4500;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Dog Count Styling */
-.dog-count {
-  background-color: white;
+.search-bar {
+  width: 300px;
   padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0 10px;
+}
+
+.total-buddies-box {
+  background-color: white;
+  padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 18px;
   font-weight: bold;
+  text-align: center;
 }
 
-/* List Styling */
-ul {
-  list-style: none;
-  padding: 0;
+/* Dog Grid Styling */
+.dog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
 }
 
-/* Individual Dog Item Styling */
-.dog-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+.dog-card {
+  position: relative;
   background-color: #fff;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.dog-item:hover {
-  border-color: #ffcc00;
+.dog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Link Styling */
+.dog-card-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.dog-card:hover .dog-card-overlay {
+  opacity: 1;
+}
+
+.delete-icon {
+  background-color: #ff4500;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.delete-icon:hover {
+  background-color: #e63d00;
+}
+
 .dog-link {
   text-decoration: none;
   color: inherit;
-  flex-grow: 1;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Dog Item Content Styling */
-.dog-item-content {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
+.dog-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 10px;
+}
+
+.dog-info {
+  text-align: center;
 }
 
 .dog-name {
-  margin-right: auto;
+  font-size: 18px;
   font-weight: bold;
-  color: #000;
+  color: #141414;
+  margin-bottom: 5px;
 }
 
 .dog-breed {
-  margin-left: auto;
-  margin-right: 10px;
-  color: grey;
-}
-
-/* Delete Button Styling */
-.delete-button {
-  background-color: transparent;
-  color: #ff4500;
-  font-size: 20px;
-  border: none;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  color: #ff4500;
-}
-
-/* Dropdown Menu Styling */
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropbtn {
-  background-color: #ff4500;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  right: 0;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content button {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  border: none;
-  background-color: white;
-  width: 100%;
-  text-align: left;
-}
-
-.dropdown-content button:hover {
-  background-color: #ff4500;
-  color: white;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: #ff4500;
-}
-.owner-icon {
-  margin-left: 10px; /* Add some space between the name and the icon */
-  color: #ff4500; /* Gold color for the star icon */
+  font-size: 14px;
+  color: #888;
 }
