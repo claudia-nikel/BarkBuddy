@@ -48,7 +48,6 @@ const LandingPage = () => {
         <p>With BarkBuddy, you can:</p>
         <ul className="bulleted-list">
           <li>Add and store pictures and information about dogs you encounter.</li>
-          // <li>Assign each dog a unique identifier, making it easy to share their profile with friends or fellow dog park visitors.</li> 
           <li>Enjoy a user-friendly interface designed to be intuitive and easy to navigate.</li>
           <li>Access the app on any device, thanks to its fully responsive design.</li>
         </ul>
