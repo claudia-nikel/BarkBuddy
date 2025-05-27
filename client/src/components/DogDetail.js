@@ -44,6 +44,7 @@ const DogDetail = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
+  const [sightings, setSightings] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -88,9 +89,11 @@ const DogDetail = () => {
         });
 
         if (response.data && response.data.length > 0) {
-          setLatitude(response.data[0].latitude);
-          setLongitude(response.data[0].longitude);
-        }
+          setSightings(response.data);
+          const firstLocation = response.data[0];
+          setLatitude(firstLocation.latitude);
+          setLongitude(firstLocation.longitude);
+        }        
       } catch (error) {
         console.error('Failed to fetch location data', error);
       }
@@ -115,6 +118,32 @@ const DogDetail = () => {
       setImagePreview(null);
     }
   };
+
+  const handleSawThisDog = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+  
+        try {
+          const token = await getAccessTokenSilently();
+          const response = await axios.post(
+            `${apiUrl}/locations/${id}`,
+            { latitude: lat, longitude: lon },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+  
+          setSightings((prev) => [...prev, response.data]); // Update sightings with the new location
+        } catch (error) {
+          console.error('Failed to save sighting:', error);
+        }
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -157,15 +186,27 @@ const DogDetail = () => {
   return (
     <>
       <NavBar />
-      <div className="flex justify-start p-4">
-        <div className="add-dog-container max-w-lg p-4 w-full">
-          <h1 className="text-2xl font-semibold mb-4">{editMode ? "Edit Dog Info" : "Dog Info"}</h1>
-          {isSubmitting ? (
+      <div className="relative p-4"> {/* Flex container for dog details and image */}
+      <div className="flex items-start space-x-8"></div>
+    {/* Dog Details */}
+    <div className="add-dog-container max-w-md">
+        <h1
+            className="text-3xl font-bold mb-4"
+            style={{ color: "#ff4500", textAlign: "left" }}
+        >
+            {editMode ? "Edit Dog Info" : "Dog Info"}
+        </h1>
+        {isSubmitting ? (
             <div className="loading-spinner-container">
-              <ClipLoader size={80} color={"#ff4500"} loading={isSubmitting} />
+                <ClipLoader size={80} color={"#ff4500"} loading={isSubmitting} />
             </div>
-          ) : editMode ? (
+        ) : editMode ? (
             <form onSubmit={handleSubmit} className="space-y-4 text-left">
+              
+              
+              
+              
+              
               {/* Name Field */}
               <div>
                 <label className="label">Dog's Name</label>
@@ -353,10 +394,13 @@ const DogDetail = () => {
                 />
               </div>
 
+              
+
               <div className="submit-button-container">
                 <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600" disabled={isSubmitting}>
                   Save Changes
                 </button>
+
               </div>
             </form>
           ) : (
@@ -369,39 +413,122 @@ const DogDetail = () => {
               <p><strong>Owner's Name:</strong> {owner}</p>
               <p><strong>Second Owner's Name:</strong> {owner2}</p>
               <p><strong>Breed:</strong> {breed}</p>
-              <p><strong>Is Friendly?:</strong> {isFriendly}</p>
+              <p><strong>Is Friendly?</strong> {isFriendly}</p>
               <p><strong>Size:</strong> {size}</p>
               <p><strong>Neighborhood:</strong> {neighborhood}</p>
               <p><strong>Notes:</strong> {notes}</p>
               <p><strong>My Dog?</strong> {isOwner ? 'Yes' : 'No'}</p>
-              <button onClick={() => setEditMode(true)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                Edit
+              <div className="flex flex-col space-y-2">
+              <button
+                onClick={handleSawThisDog}
+                className="bg-[#ff4500] text-white py-1 px-3 rounded hover:bg-[#e04000]"
+                style={{
+                  maxWidth: "150px",
+                }}
+              >
+                Saw This Dog
               </button>
+
+            </div>
             </div>
           )}
         </div>
-        {/* Image Container */}
-        {imagePreview && (
-          <div className="ml-6 w-1/4 mt-8">
-            <img src={imagePreview} alt={name} className="rounded-md" />
-          </div>
-        )}
-      </div>
-      {/* Map Section */}
-      {latitude && longitude && (
-        <div className="mt-6 max-w-6xl mx-auto p-4">
-          <h3 className="font-medium mb-2">Where did I first meet this dog?</h3>
-          <MapContainer center={[latitude, longitude]} zoom={13} style={{ height: '300px', width: '100%' }}>
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            />
-            <Marker position={[latitude, longitude]} icon={L.divIcon({ html: `<i class="fa fa-paw text-red-500"></i>`, className: '' })}>
-              <Popup>Dog was added here</Popup>
+{/* Image Preview */}
+{imagePreview && (
+  <div className="w-1/3">
+    <img
+      src={imagePreview}
+      alt={name}
+      className="rounded-md w-full border border-gray-300 shadow-md"
+    />
+  </div>
+)}
+
+
+  {/* Edit Button */}
+  <button
+  onClick={() => setEditMode(true)}
+  className="absolute top-4 right-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 z-10"
+>
+  Edit
+</button>
+
+</div>
+
+{/* Map Section */}
+{latitude && longitude && (
+  <div className="mt-6 max-w-6xl mx-auto p-4">
+    {/* Map and Title Layout */}
+    <div className="flex">
+      {/* Map and Title Group */}
+      <div style={{ width: "75%", position: "relative" }}>
+        {/* Title */}
+        <h3
+          className="text-3xl font-bold text-center mb-4"
+          style={{
+            color: "#ff4500",
+          }}
+        >
+          Sightings of This Dog
+        </h3>
+
+        {/* Map */}
+        <MapContainer
+          center={latitude && longitude ? [latitude, longitude] : [0, 0]}
+          zoom={13}
+          style={{ height: "300px", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          />
+          {sightings.map((location, index) => (
+            <Marker
+              key={index}
+              position={[location.latitude, location.longitude]}
+              icon={L.divIcon({
+                html: `<i class="fa fa-paw" style="color: ${
+                  index === 0 ? "#ff4500" : "#007bff"
+                }"></i>`,
+                className: "",
+              })}
+            >
+              <Popup>
+                {index === 0 ? "First met this dog here" : "Dog seen here"}
+              </Popup>
             </Marker>
-          </MapContainer>
-        </div>
-      )}
+          ))}
+        </MapContainer>
+      </div>
+
+      {/* Legend */}
+      <div
+        className="ml-4"
+        style={{
+          width: "25%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          marginTop: "30px", // Adjust this to match the top of the map
+        }}
+      >
+        <h4 className="font-bold underline mb-2">Legend</h4>
+        <p>
+          <i className="fa fa-paw" style={{ color: "#ff4500" }}></i> First Sighting
+        </p>
+        <p>
+          <i className="fa fa-paw" style={{ color: "#007bff" }}></i> Subsequent Sightings
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
     </>
   );
 };
