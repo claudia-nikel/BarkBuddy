@@ -143,12 +143,19 @@ Release Date: October 27, 2024
 - [X] Add location details when adding dogs
 - [X] Add loading spinner
 
-# V6 (Current)
+# V6
 Release Date: December 27, 2024
 - [X] UI Refactor
 - [X] Add more details to dogs: second owner, neighborhood, and friendliness
 - [X] Add ability to Favorite a dog
 - [X] Add search bar to find dogs by name
 
-# V7
+# V7 (Current)
+Release Date: May 27, 2025
+- [X] Ability to add locations for subsequent sightings of the dog
+- [X] Updated UI for Dog Detail page
+
+
+# Future versions
 - [ ] Add ability to add other dogs by their unique id
+- [ ] Add ability to add multiple pictures of dogs
